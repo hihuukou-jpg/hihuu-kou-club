@@ -208,7 +208,7 @@ export default function AdminPage() {
     };
 
     return (
-        <div style={{ padding: "2rem", color: "var(--text-main)", background: "var(--hakurei-white)", minHeight: "100vh", fontFamily: "var(--font-serif)" }}>
+        <div style={{ padding: "2rem", paddingTop: "120px", color: "var(--text-main)", background: "var(--hakurei-white)", minHeight: "100vh", fontFamily: "var(--font-serif)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                 <h1 style={{ fontSize: "2rem", color: "var(--hakurei-red)" }}>管理ダッシュボード {session ? "(編集モード)" : "(閲覧モード)"}</h1>
                 <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
