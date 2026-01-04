@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { supabase } from '../../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../../lib/supabase';
 
 export async function POST(request) {
     const session = await getServerSession(authOptions);
@@ -22,7 +22,11 @@ export async function POST(request) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        const { data, error } = await supabase
+        // Use Admin client to bypass RLS for uploads
+        // If supabaseAdmin is missing (no service key), fall back to public client (might fail)
+        const client = supabaseAdmin || supabase;
+
+        const { data, error } = await client
             .storage
             .from('uploads')
             .upload(filePath, buffer, {
@@ -31,6 +35,7 @@ export async function POST(request) {
             });
 
         if (error) {
+            console.error("Supabase Storage Error:", error);
             throw error;
         }
 
@@ -41,6 +46,7 @@ export async function POST(request) {
 
         return NextResponse.json({ url: publicUrl });
     } catch (error) {
-        return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+        console.error("Upload Route Error:", error);
+        return NextResponse.json({ error: 'Upload failed', details: error.message }, { status: 500 });
     }
 }
