@@ -1,0 +1,18 @@
+�[
+    {
+        "id": "renko",
+        "name": "宇佐見 蓮子",
+        "role": "物理学者 / シナリオ構成",
+        "description": "星を見ただけで時間が分かり、月を見ただけで場所が分かる程度の能力を持つ。客観的・論理的な視点から「不思議」を解明しようとする。",
+        "image": "/images/renko.png",
+        "color": "#1a1a1a"
+    },
+    {
+        "id": "merry",
+        "name": "マエリベリー・ハーン",
+        "role": "オカルト専攻 / 境界観測",
+        "description": "結界の裂け目を見る程度の能力を持つ。主観的な体験を通して「不思議」を受け入れる。愛称はメリー。",
+        "image": "/images/merry.png",
+        "color": "#e0b0ff"
+    }
+]� *cascade08���� *cascade08���� *cascade082Bfile:///c:/Users/kouki/.gemini/hifuu-kou-club/data/characters.json

@@ -1,0 +1,52 @@
+# ウェブサイト作成 実装計画
+
+ユーザーの要望に基づき、モダンで視覚的に魅力的なウェブサイトを新規作成します。
+
+## ユーザーレビュー必須事項
+> [!IMPORTANT]
+> この計画は汎用的な「モダン・プレミアム」なデザインを想定しています。
+> 具体的なウェブサイトの目的（ポートフォリオ、企業サイト、ブログなど）や、好みの色味があれば教えてください。
+
+## 提案される変更
+
+### プロジェクト構成
+- **プロジェクト名**: `modern-website` (仮)
+- **場所**: `C:\Users\kouki\.gemini\modern-website`
+- **技術スタック**:
+    - ビルドツール: [Vite](https://vitejs.dev/)
+    - フレームワーク: [React](https://react.dev/)
+    - 言語: JavaScript
+    - スタイリング: Vanilla CSS (モダン CSS 機能活用)
+
+### 新規作成ファイル・ディレクトリ
+
+#### [NEW] [index.html](file:///C:/Users/kouki/.gemini/modern-website/index.html)
+- SEOを意識したメタタグ設定
+- Google Fonts (Inter, Outfit 等) の読み込み
+
+#### [NEW] [src/App.jsx](file:///C:/Users/kouki/.gemini/modern-website/src/App.jsx)
+- アプリケーションのメイン構造
+- セクションの配置 (Hero, Features, Footer)
+
+#### [NEW] [src/index.css](file:///C:/Users/kouki/.gemini/modern-website/src/index.css)
+- CSS変数によるカラーパレット定義（ダークモード基調、鮮やかなアクセント）
+- リセットCSSとベーススタイル
+
+#### [NEW] コンポーネント群
+- `src/components/Navbar.jsx`: レスポンシブなナビゲーション
+- `src/components/Hero.jsx`: 大きな見出しとCTAボタン、背景アニメーション
+- `src/components/Features.jsx`: 特徴を紹介するカードグリッド
+- `src/components/Footer.jsx`: シンプルなフッター
+
+## 検証計画
+
+### 自動テスト
+- `npm run build` を実行し、ビルドエラーがないことを確認する。
+
+### 手動検証
+- `npm run dev` でローカルサーバーを起動。
+- ブラウザで `http://localhost:5173` (ポートは可変) にアクセス。
+- 以下の点を確認:
+    - デザインが崩れていないか
+    - ボタンのホバーエフェクトが機能するか
+    - レスポンシブ表示（スマホサイズ）でレイアウトが適切に調整されるか

@@ -1,0 +1,51 @@
+# Implementation Plan - UI Refinement & Supabase Migration
+
+## Goal Description
+Refine the website UI by localizing navigation to English and fixing layout issues. Migrate data persistence from local JSON files to Supabase for production readiness.
+
+## User Review Required
+- [ ] Confirm Supabase credentials are valid (Project URL, Anon Key).
+- [ ] Review UI text changes.
+
+## Proposed Changes
+
+### UI Refinement
+#### [MODIFY] [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+- Update nav items to English: "NEWS", "DIARY", "CHARACTERS", "CONTENT".
+- Fix "秘封工倶楽部" logo text styles to `whitespace-nowrap`.
+
+#### [MODIFY] [VideoSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/VideoSection.js)
+- Change section title from "MUSIC VIDEO / CONTENT" to "CONTENT".
+
+### Supabase Migration
+
+#### [ACTION] Create Supabase Tables
+- Run the SQL commands in [supabase_schema.sql](file:///C:/Users/kouki/.gemini/antigravity/brain/958c328f-9a7e-4139-89fa-f8c769517819/supabase_schema.sql) in the Supabase SQL Editor.
+
+#### [NEW] [lib/supabase.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/lib/supabase.js)
+- Initialize Supabase client using environment variables.
+
+#### [MODIFY] [app/api/news/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/news/route.js)
+- GET: `supabase.from('news').select('*').order('date', { ascending: false })`
+- POST: `supabase.from('news').insert(body)`
+
+#### [MODIFY] [app/api/diary/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/diary/route.js)
+- GET: `supabase.from('diary').select('*').order('date', { ascending: false })`
+- POST: `supabase.from('diary').insert(body)`
+
+#### [MODIFY] [app/api/videos/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/videos/route.js)
+- GET: `supabase.from('videos').select('*').order('created_at', { ascending: false })`
+- POST: `supabase.from('videos').insert(body)`
+
+#### [MODIFY] [app/api/characters/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/characters/route.js)
+- GET: `supabase.from('characters').select('*')`
+
+## Verification Plan
+### Automated Tests
+- Setup a test script to check Supabase connection.
+- Verify API endpoints return data from Supabase.
+
+### Manual Verification
+- Check Navbar for English text and layout.
+- Check "CONTENT" section title.
+- Verify News/Diary/Characters load correctly on the frontend.

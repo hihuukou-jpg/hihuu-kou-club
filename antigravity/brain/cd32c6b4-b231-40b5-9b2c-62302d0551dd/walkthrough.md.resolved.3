@@ -1,0 +1,68 @@
+# Hifuu Kou Club Website Walkthrough
+
+The website for "Hifuu Kou Club" has been successfully initialized and implemented with a unique "Cyber-Shrine" aesthetic, blending the industrial sci-fi feel of *Arknights: Endfield* with the traditional Japanese elements of the Hakurei Shrine.
+
+## Demo Recording
+
+![Website Demo](file:///C:/Users/kouki/.gemini/antigravity/brain/cd32c6b4-b231-40b5-9b2c-62302d0551dd/hifuu_website_demo_1767522139559.webp)
+
+## Features Implemented
+
+### 1. Immersive Landing Page ([app/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/page.js))
+- **Hero Animation**: A dramatic entry sequence with fading curtains and glitch-in typography.
+- **Visuals**: A "Washi" (Japanese paper) noise texture overlay on a deep charcoal background (`#1a1a1a`), accented with Hakurei Red (`#E60033`).
+- **Atmosphere**: Floating "Sakura" particles created with Framer Motion to give a sense of depth and flow.
+
+### 2. Navigation ([components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js))
+- **Persistent Layout**: A top navigation bar that slides in after the intro.
+- **Style**: Mimics a Shinto "Ofuda" or sealing strip with vertical text elements.
+- **Links**: Home, News, Diary, Characters.
+
+### 3. News Section ([app/news/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/news/page.js))
+- **Design**: "Ema" (wooden plaque) style cards.
+- **Animation**: Staggered entry for each news item.
+- **Data**: Loaded from [data/news.json](file:///c:/Users/kouki/.gemini/hifuu-kou-club/data/news.json).
+
+### 4. Diary / DevLog ([app/diary/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/diary/page.js))
+- **Design**: A vertical timeline on a scroll-like background.
+- **Features**: Includes a "Video Progress" bar to visualize production status.
+- **Data**: Loaded from [data/diary.json](file:///c:/Users/kouki/.gemini/hifuu-kou-club/data/diary.json).
+
+### 5. Character Introduction ([app/characters/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/characters/page.js))
+- **Design**: "Fusuma" (Sliding Door) interaction.
+- **Animation**: Clicking a character expands their panel to reveal details, pushing others aside.
+- **Data**: Loaded from [data/characters.json](file:///c:/Users/kouki/.gemini/hifuu-kou-club/data/characters.json) (Renko & Maribel).
+
+### 6. Admin Dashboard (CMS)
+- **URL**: `/admin`
+- **Authentication**: Secured with NextAuth.js.
+    - **User**: `renko`
+    - **Pass**: `merry`
+- **Functionality**:
+    - **News Management**: Add posts (title/content).
+    - **Character Management**: Add/Delete characters (name/role/desc/color).
+    - **Data Persistence**: Updates [data/news.json](file:///c:/Users/kouki/.gemini/hifuu-kou-club/data/news.json) and [data/characters.json](file:///c:/Users/kouki/.gemini/hifuu-kou-club/data/characters.json) directly.
+- **Managing Credentials**:
+    - The admin account is defined in `.env` (or environment variables).
+    - To change the login, update `ADMIN_USER` and `ADMIN_PASS` in the `.env` file and restart the server.
+    - *Note: Currently, this system supports a single admin authentication. Everyone with these credentials has full access.*
+
+## Technical Details
+
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Vanilla CSS (Global Variables + CSS Modules approach)
+- **Animation**: Framer Motion
+- **Icons**: Lucide React
+
+## How to Run
+
+1. Open the terminal `C:\Users\kouki\.gemini\hifuu-kou-club`.
+2. Run the development server:
+   ```powershell
+   npm run dev
+   ```
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Next Steps
+- Add actual content to the JSON files in `data/`.
+- Replace the placeholder colors/images in `app/characters/page.js` with actual character illustrations.

@@ -1,0 +1,56 @@
+# Supabase Migration Plan
+
+## Goal
+Migrate the "Hifuu Kou Club" website from using local JSON files to Supabase for data persistence. This ensures that content updates (News, Diary, Characters, Videos) can be managed dynamically via the Admin dashboard and reflected immediately on the public site.
+
+## User Review Required
+> [!IMPORTANT]
+> **Environment Variables**: Ensure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (and `SUPABASE_SERVICE_ROLE_KEY` for admin) are correctly set in `.env.local` or Vercel.
+
+## Proposed Changes
+
+### API Routes
+Refactor existing API routes to read/write from Supabase tables instead of local `data/*.json` files.
+
+#### [MODIFY] [route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/news/route.js)
+- detailed logic to select/insert/update/delete from `news` table.
+
+#### [MODIFY] [route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/diary/route.js)
+- detailed logic to select/insert/update/delete from `diary` table.
+
+#### [MODIFY] [route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/characters/route.js)
+- detailed logic for `characters` table.
+
+#### [MODIFY] [route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/videos/route.js)
+- detailed logic for `videos` table.
+
+### Public Pages
+Update public pages to fetch data dynamically from Supabase (using `lib/supabase.js`) instead of importing static JSON.
+
+#### [MODIFY] [News Page](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/news/page.js)
+- Remove `import newsData from '../../data/news.json'`
+- Add data fetching (Server Component) using `supabase`.
+
+#### [MODIFY] [Diary Page](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/diary/page.js)
+- Remove `import diaryData from '../../data/diary.json'`
+- Add data fetching (Server Component) using `supabase`.
+
+#### [MODIFY] [Characters/Videos Components]
+- If there are specific pages or components for these, update them similarly. (Likely `app/biography/page.js` or `app/page.js`).
+
+## Verification Plan
+
+### Automated Tests
+- None available currently.
+
+### Manual Verification
+1.  **Admin Dashboard**:
+    - Add a new "News" item.
+    - Verify it appears in the list below the form.
+    - Add a new "Diary" entry with progress.
+    - Verify it appears.
+2.  **Public Pages**:
+    - Visit `/news` and verify the newly added item appears.
+    - Visit `/diary` and verify the entry appears.
+3.  **Supabase Console (Optional)**:
+    - Check if rows are actually created in the database tables.

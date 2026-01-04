@@ -1,0 +1,47 @@
+# Arknights Endfield Style Website Implementation Plan
+
+The goal is to create a high-quality, aesthetic website for the YouTube channel "Secret Sealing Club" (Hifuu Club), inspired by the visual style of "Arknights: Endfield".
+
+## User Review Required
+> [!IMPORTANT]
+> The current directory contains a Java project template. I will move these files to a `_backup` folder to create a clean workspace for the web application.
+
+## Proposed Changes
+
+### Project Initialization
+- Move existing files (`src`, `lib`, [App.java](file:///c:/Users/kouki/%E7%A7%81%E3%81%9F%E3%81%A1%E3%81%AE%E3%82%B5%E3%82%A4%E3%83%88%E3%82%92%E4%BD%9C%E3%82%8A%E3%81%9F%E3%81%84/src/App.java), etc.) to `_backup`.
+- Initialize a new Vite project: `npm create vite@latest . -- --template react`
+- Install dependencies:
+    - `framer-motion` (for complex UI animations)
+    - `lucide-react` (for icons)
+    - `react-router-dom` (for navigation)
+
+### Design & Implementation
+#### [NEW] [index.css](file:///c:/Users/kouki/私たちのサイトを作りたい/src/index.css)
+- Implement CSS variables for the color palette:
+    - Background: `#0a0a0a`, `#141414` (Industrial Dark)
+    - Accent: `#ff5f00` (Safety Orange), `#00d1ff` (Holographic Cyan)
+    - Fonts: Inter (System UI), JetBrains Mono (Technical Data)
+- Reset and base styles.
+
+#### [NEW] [App.jsx](file:///c:/Users/kouki/私たちのサイトを作りたい/src/App.jsx)
+- Structure the main layout with a persistent "System UI" overlay (headers, decorative technical elements).
+- Routing setup.
+
+#### [NEW] [components/Hero.jsx](file:///c:/Users/kouki/私たちのサイトを作りたい/src/components/Hero.jsx)
+- Full-screen impactful hero section.
+- Video background or high-res generated image.
+- "Secret Sealing Club" branding in technical typography.
+
+#### [NEW] [components/SystemUI.jsx](file:///c:/Users/kouki/私たちのサイトを作りたい/src/components/SystemUI.jsx)
+- Decorative elements mimicking game HUDs (lines, coordinate numbers, status indicators).
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm run dev` to start the local development server.
+- Use the Browser Tool to navigate to the local URL.
+- Verify:
+    - No console errors.
+    - Animations play smoothly.
+    - Formatting and layout match the "Endfield" aesthetic (dark, industrial, crisp).

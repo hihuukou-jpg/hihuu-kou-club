@@ -1,0 +1,58 @@
+ž
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+#
+# Initial commit
+#
+# Changes to be committed:
+#	new file:   .gitignore
+#	new file:   GEMINI.md
+#	new file:   hifuu-kou-club/.gitignore
+#	new file:   hifuu-kou-club/README.md
+#	new file:   hifuu-kou-club/app/admin/page.js
+#	new file:   hifuu-kou-club/app/api/auth/[...nextauth]/route.js
+#	new file:   hifuu-kou-club/app/api/characters/route.js
+#	new file:   hifuu-kou-club/app/api/diary/route.js
+#	new file:   hifuu-kou-club/app/api/news/route.js
+#	new file:   hifuu-kou-club/app/api/upload/route.js
+#	new file:   hifuu-kou-club/app/api/videos/route.js
+#	new file:   hifuu-kou-club/app/characters/page.js
+#	new file:   hifuu-kou-club/app/diary/page.js
+#	new file:   hifuu-kou-club/app/favicon.ico
+#	new file:   hifuu-kou-club/app/globals.css
+#	new file:   hifuu-kou-club/app/layout.js
+#	new file:   hifuu-kou-club/app/news/page.js
+#	new file:   hifuu-kou-club/app/page.js
+#	new file:   hifuu-kou-club/app/page.module.css
+#	new file:   hifuu-kou-club/components/CharacterSection.js
+#	new file:   hifuu-kou-club/components/DiaryEditor.js
+#	new file:   hifuu-kou-club/components/DiarySection.js
+#	new file:   hifuu-kou-club/components/Footer.js
+#	new file:   hifuu-kou-club/components/Hero.js
+#	new file:   hifuu-kou-club/components/Navigation.js
+#	new file:   hifuu-kou-club/components/NewsSection.js
+#	new file:   hifuu-kou-club/components/Providers.js
+#	new file:   hifuu-kou-club/components/VideoSection.js
+#	new file:   hifuu-kou-club/data/characters.json
+#	new file:   hifuu-kou-club/data/diary.json
+#	new file:   hifuu-kou-club/data/news.json
+#	new file:   hifuu-kou-club/data/videos.json
+#	new file:   hifuu-kou-club/eslint.config.mjs
+#	new file:   hifuu-kou-club/jsconfig.json
+#	new file:   hifuu-kou-club/lib/supabase.js
+#	new file:   hifuu-kou-club/next.config.mjs
+#	new file:   hifuu-kou-club/package-lock.json
+#	new file:   hifuu-kou-club/package.json
+#	new file:   hifuu-kou-club/public/characters/image.jpg
+#	new file:   hifuu-kou-club/public/file.svg
+#	new file:   hifuu-kou-club/public/globe.svg
+#	new file:   hifuu-kou-club/public/images/merry.png
+#	new file:   hifuu-kou-club/public/images/renko.png
+#	new file:   hifuu-kou-club/public/next.svg
+#	new file:   hifuu-kou-club/public/vercel.svg
+#	new file:   hifuu-kou-club/public/window.svg
+#	new file:   hifuu-kou-club/test_connection.mjs
+#
+ž22file:///c:/Users/kouki/.gemini/.git/COMMIT_EDITMSG

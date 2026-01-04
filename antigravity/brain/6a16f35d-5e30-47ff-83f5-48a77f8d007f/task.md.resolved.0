@@ -1,0 +1,6 @@
+# Deployment Tasks
+
+- [ ] Verify project configuration and dependencies
+- [ ] Run local build test to ensure no errors
+- [ ] Confirm environment variables (Supabase, etc.)
+- [ ] Execute deployment

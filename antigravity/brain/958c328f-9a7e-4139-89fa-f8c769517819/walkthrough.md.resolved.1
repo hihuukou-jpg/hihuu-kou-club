@@ -1,0 +1,94 @@
+# 初心者向け：Webサイト公開（デプロイ）完全ガイド
+
+このガイドでは、作ったWebサイトをインターネット上で誰でも見られるように公開する手順を、専門用語をなるべく使わずに説明します。
+
+3つのサービスを使います（すべて無料で使えます）。
+1.  **Supabase（スパベース）**: データベース（ニュースや日誌のデータを保存する場所）
+2.  **GitHub（ギットハブ）**: コード置き場
+3.  **Vercel（バーセル）**: Webサイトの表示場所
+
+---
+
+## 手順1: データベースの準備 (Supabase)
+
+まずはデータの保存場所を作ります。
+
+1.  **Supabaseに登録する**
+    - [Supabase公式サイト](https://supabase.com/) にアクセスし、「Start your project」から登録（GitHubアカウントがあると便利です）します。
+
+2.  **プロジェクトを作る**
+    - 「New Project」ボタンを押します。
+    - **Name**: `hifuu-kou-club` など好きな名前
+    - **Database Password**: **重要！** 生成されたパスワードをコピーして、メモ帳などに必ず控えてください。
+    - 「Create new project」を押して、セットアップが終わるまで数分待ちます。
+
+3.  **初期設定（テーブル作成）**
+    - 左側のメニューから「SQL Editor」（紙とペンのアイコン）を選びます。
+    - ページ上部の「New query」を押します。
+    - 下記のファイルの中身をすべてコピーして、SQLエディタに貼り付けます。
+        - コピー元: [supabase_schema.sql](file:///C:/Users/kouki/.gemini/antigravity/brain/958c328f-9a7e-4139-89fa-f8c769517819/supabase_schema.sql) ([リンク](file:///C:/Users/kouki/.gemini/antigravity/brain/958c328f-9a7e-4139-89fa-f8c769517819/supabase_schema.sql))
+    - 右下の「Run」ボタンを押します。「Success」と出ればOKです。これでデータの箱と中身が用意されました。
+
+4.  **鍵（キー）をコピーする**
+    - 左下の「Project Settings」（歯車アイコン）→「API」を選びます。
+    - 以下の2つをメモ帳にコピーしておきます（後で使います）。
+        1.  **Project URL** (`https://...supabase.co` というURL)
+        2.  **Project API keys** の `anon` / `public` と書かれているキー (`eyJ...` から始まる長い文字列)
+
+---
+
+## 手順2: コードをインターネットにアップロード (GitHub)
+
+次に、あなたのパソコンにあるプログラムコードをGitHubという倉庫に預けます。
+
+1.  **GitHubに登録する**
+    - [GitHub](https://github.com/) でアカウントを作ります。
+
+2.  **VS Codeからアップロードする** (一番簡単な方法)
+    - 今開いているこの画面（VS Code）の左端にある「ソース管理」アイコン（枝分かれした線のマーク）をクリックします。
+    - 「GitHubに公開 (Publish to GitHub)」というボタンがあればそれを押します。
+    - なければ、上部のメニューバーの「ターミナル」→「新しいターミナル」で以下を入力してみてください（もしエラーが出たら教えてください）。
+        ```
+        git add .
+        git commit -m "First commit"
+        ```
+    - GitHub上で「New Repository」を作り、表示されたコマンドを使ってアップロードします。
+    - ※もしこれが難しければ、「GitHub Desktop」というアプリをインストールすると、マウス操作だけでアップロードできます。
+
+---
+
+## 手順3: サイトを公開する (Vercel)
+
+最後に、Vercelを使ってサイトを世界中に公開します。
+
+1.  **Vercelに登録する**
+    - [Vercel](https://vercel.com/) にアクセスし、「Sign Up」→「Continue with GitHub」を選びます。
+
+2.  **プロジェクトを取り込む**
+    - ダッシュボードの「Add New...」→「Project」を選びます。
+    - さきほどGitHubにアップロードした `hifuu-kou-club` というリポジトリが表示されるので、「Import」を押します。
+
+3.  **環境変数を設定する（最重要！）**
+    - 「Configure Project」という画面になります。
+    - **Environment Variables** という項目を開きます。ここに入力しないと、データベースに繋がりません。
+    - 以下の2つを、さっきメモしたSupabaseの情報を使って入力し、「Add」を押して追加します。
+
+    | Name (名前) | Value (値) |
+    | :--- | :--- |
+    | `NEXT_PUBLIC_SUPABASE_URL` | Supabaseの **Project URL** |
+    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabaseの **anon key** |
+    | `NEXTAUTH_SECRET` | 適当な長い文字列（例: `secret123`など何でもOK） |
+    | `NEXTAUTH_URL` | 空欄でOK（自動設定されます） |
+
+4.  **デプロイ実行**
+    - 「Deploy」ボタンを押します。
+    - 花吹雪のアニメーションが出たら完了です！
+    - 表示された画像のリンクをクリックすると、あなたのサイトにアクセスできます。
+
+---
+
+## うまくいかないときは？
+
+- **画面が真っ白**: 環境変数（URLやKey）が間違っていることが多いです。VercelのSettingsで確認しましょう。
+- **データが表示されない**: SupabaseでSQLを実行し忘れていませんか？
+- **何かわからない**: エラーメッセージを教えてくれれば、一緒に解決します！

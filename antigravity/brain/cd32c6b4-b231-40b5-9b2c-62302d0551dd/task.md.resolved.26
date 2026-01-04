@@ -1,0 +1,37 @@
+# Tasks
+
+- [x] Clarify website requirements <!-- id: 0 -->
+- [x] Design website structure and technology stack <!-- id: 1 -->
+    - [x] Create implementation plan <!-- id: 1-1 -->
+    - [x] Define animation style (Endfield-motion with Hakurei/Wa aesthetic) <!-- id: 1-2 -->
+- [/] Implement website core <!-- id: 3 -->
+    - [x] Install Node.js (Prerequisite) <!-- id: 3-0 -->
+    - [x] Setup Next.js project <!-- id: 3-1 -->
+    - [x] Create layout and core styles (Hakurei Shrine Theme) <!-- id: 3-2 -->
+    - [x] Implement immersive landing page with animations <!-- id: 3-3 -->
+    - [x] Build News/Announcements section <!-- id: 3-4 -->
+    - [x] Build Diary/DevLog section <!-- id: 3-5 -->
+    - [x] Build Character Introduction section <!-- id: 3-6 -->
+- [x] Verify website implementation <!-- id: 4 -->
+    - [x] Verify animations and responsiveness (Build Check) <!-- id: 4-1 -->
+    - [x] Check content management flow <!-- id: 4-2 -->
+- [/] Implement Admin System (CMS) <!-- id: 5 -->
+    - [x] Setup Authentication (NextAuth.js) <!-- id: 5-1 -->
+    - [x] Create API Routes for Data Management (News/Characters) <!-- id: 5-2 -->
+    - [x] Build Admin Dashboard UI <!-- id: 5-3 -->
+    - [x] Verify Admin functionality <!-- id: 5-4 -->
+- [x] UI Redesign & Restructuring <!-- id: 6 -->
+    - [x] Generate Character Assets <!-- id: 6-1 -->
+    - [x] Refactor content pages to Sections (News, Diary) <!-- id: 6-2 -->
+    - [x] Implement Endfield-style Character Section <!-- id: 6-3 -->
+    - [x] Update Homepage to One-Page Layout <!-- id: 6-4 -->
+    - [x] Implement Endfield-style Character Section <!-- id: 6-3 -->
+    - [x] Update Homepage to One-Page Layout <!-- id: 6-4 -->
+    - [x] Add Social Footer (X, YouTube) <!-- id: 6-5 -->
+    - [x] Add Social Footer (X, YouTube) <!-- id: 6-5 -->
+    - [x] Implement Notion-like Diary Editor (TipTap) <!-- id: 6-6 -->
+    - [x] Implement Video Promotion Section <!-- id: 6-7 -->
+        - [x] Create Video Data API <!-- id: 6-7-1 -->
+        - [x] Build Video Section UI (YouTube Embeds) <!-- id: 6-7-2 -->
+        - [x] Add Video Management to Admin <!-- id: 6-7-3 -->
+    - [x] Update Navigation Bar (English Labels, Add Content Link) <!-- id: 6-8 -->

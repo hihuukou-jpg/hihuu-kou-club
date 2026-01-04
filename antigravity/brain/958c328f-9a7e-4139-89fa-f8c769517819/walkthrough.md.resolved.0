@@ -1,0 +1,38 @@
+# デプロイメントガイド & リリースノート
+
+## 変更の概要
+本番環境での運用に向けたUIの洗練と、データ永続化のためのSupabase移行コードの実装が完了しました。
+
+### 主な変更点
+- **UI改善**: ナビゲーションの英語化、ロゴのレイアウト修正、セクション名変更。
+- **Supabase移行**: ニュース、日誌、キャラクター、動画の各データをSupabaseから取得・保存するようにAPIを書き換えました。
+
+## デプロイ手順
+
+現在の環境では自動ビルド・デプロイが実行できないため、以下の手順で手動デプロイをお願いします。
+
+### 1. Supabaseの準備
+1.  Supabaseプロジェクトを作成します。
+2.  SQLエディタを開き、[supabase_schema.sql](file:///C:/Users/kouki/.gemini/antigravity/brain/958c328f-9a7e-4139-89fa-f8c769517819/supabase_schema.sql) ([リンク](file:///C:/Users/kouki/.gemini/antigravity/brain/958c328f-9a7e-4139-89fa-f8c769517819/supabase_schema.sql)) の内容をすべてコピーして実行します。
+    - これにより、テーブル作成と初期データ（既存のJSONデータ）のインポートが行われます。
+
+### 2. 環境変数の設定
+デプロイ先（Vercelなど）の環境変数設定画面で以下を追加してください。
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=あなたのSupabaseプロジェクトURL
+NEXT_PUBLIC_SUPABASE_ANON_KEY=あなたのSupabase Anon Key
+# 管理機能を使用する場合
+SUPABASE_SERVICE_ROLE_KEY=あなたのSupabase Service Access Key
+NEXTAUTH_SECRET=ランダムな文字列
+NEXTAUTH_URL=デプロイ先のURL (例: https://hifuu-kou-club.vercel.app)
+```
+
+### 3. デプロイの実行
+ソースコードをGitHub等にプッシュし、Vercel等のホスティングサービスと連携してデプロイを実行してください。
+
+## 動作確認
+デプロイ完了後、以下の点を確認してください。
+- サイトが表示され、ナビゲーションが "NEWS", "DIARY" 等になっているか。
+- 各セクションに初期データ（お知らせ、日誌など）が表示されているか。
+- 管理画面 (`/admin`) にログインでき、データの追加・編集ができるか。

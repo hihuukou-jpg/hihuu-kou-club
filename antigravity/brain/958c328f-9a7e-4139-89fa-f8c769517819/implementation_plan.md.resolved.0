@@ -1,0 +1,41 @@
+# Implementation Plan - UI Refinement & Supabase Migration
+
+## Goal Description
+Refine the website UI by localizing navigation to English and fixing layout issues. Migrate data persistence from local JSON files to Supabase for production readiness.
+
+## User Review Required
+- [ ] Confirm Supabase credentials are valid (Project URL, Anon Key).
+- [ ] Review UI text changes.
+
+## Proposed Changes
+
+### UI Refinement
+#### [MODIFY] [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+- Update nav items to English: "NEWS", "DIARY", "CHARACTERS", "CONTENT".
+- Fix "秘封工倶楽部" logo text styles to `whitespace-nowrap`.
+
+#### [MODIFY] [VideoSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/VideoSection.js)
+- Change section title from "MUSIC VIDEO / CONTENT" to "CONTENT".
+
+### Supabase Migration
+
+#### [NEW] [lib/supabase.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/lib/supabase.js)
+- Initialize Supabase client using environment variables.
+
+#### [MODIFY] [api/news/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/news/route.js) (and others)
+- Replace `fs` read/write operations with Supabase `select` and `insert/update`.
+- Files to likely update:
+    - `app/api/news/route.js`
+    - `app/api/diary/route.js`
+    - `app/api/characters/route.js`
+    - `app/api/videos/route.js`
+
+## Verification Plan
+### Automated Tests
+- Setup a test script to check Supabase connection.
+- Verify API endpoints return data from Supabase.
+
+### Manual Verification
+- Check Navbar for English text and layout.
+- Check "CONTENT" section title.
+- Verify News/Diary/Characters load correctly on the frontend.

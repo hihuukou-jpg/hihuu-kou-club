@@ -1,0 +1,52 @@
+# Implementation Plan - Hifuu Kou Club Website
+
+Create a high-quality, animated website for "Hifuu Kou Club" (Secret Sealing Crafts Club?), a Touhou Project derivative work circle.
+The design will be inspired by *Arknights: Endfield*, featuring immersive animations, a futuristic/industrial aesthetic compatible with the Hifuu Club world view, and sections for News and DevLog.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Technology Stack**:
+> - **Framework**: Next.js (React) - Chosen for performance, animation capabilities, and easy routing for blog/news functionality.
+> - **Styling**: Vanilla CSS - As per system preferences, providing full control over the visual design without framework constraints.
+> - **Animations**: Framer Motion - Essential for complex, orchestrated animations (entry sequences, scroll triggers) required to match the "Endfield" aesthetic.
+> - **Icons**: Lucide React.
+
+## Proposed Changes
+
+### Project Structure (Next.js)
+
+#### [NEW] [Project Setup]
+Initialize a new Next.js application.
+- `app/layout.js`: Main layout with persistent navigation and smooth transitions.
+- `app/page.js`: Immersive Landing Page.
+- `app/news/page.js`: Announcements list.
+- `app/diary/page.js`: DevLog/Diary list.
+- `components/`: UI components (Navbar, Footer, Hero, PostCard).
+
+### Design & Animations (The "Endfield" Feel)
+
+#### [NEW] [Styles & Asset Generation]
+- **Theme**: Dark, minimalist, technical. Colors: Slate/Charcoal background, Accent Cyan/Gold (fitting Hifuu), Monospaced headers.
+- **Animations**:
+    - **Intro Overlay**: A "loading" sequence that transitions into the main content.
+    - **Parallax/Scroll**: Elements sliding into place with slight delays.
+    - **Glitch/Technical Effects**: Subtle decorative elements (lines, coordinates, data readouts) to give that "Engineering/Observation" feel.
+
+### Content Management
+
+#### [NEW] [Data Source]
+- Use local JSON or Markdown files for News and Diary entries initially to keep it simple but expandable.
+- `data/news.json`
+- `data/diary.json`
+
+## Verification Plan
+
+### Automated Tests
+- Build verification (`npm run build`).
+- Lint checks.
+
+### Manual Verification
+- **Visual Check**: Verify the entry animation accurately conveys the requested atmosphere.
+- **Responsiveness**: Ensure the complex layout works on mobile.
+- **Navigation**: Test routing between Home, News, and Diary.

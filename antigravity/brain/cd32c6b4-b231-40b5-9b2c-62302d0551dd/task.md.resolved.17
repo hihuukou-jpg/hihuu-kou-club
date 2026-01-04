@@ -1,0 +1,22 @@
+# Tasks
+
+- [x] Clarify website requirements <!-- id: 0 -->
+- [x] Design website structure and technology stack <!-- id: 1 -->
+    - [x] Create implementation plan <!-- id: 1-1 -->
+    - [x] Define animation style (Endfield-motion with Hakurei/Wa aesthetic) <!-- id: 1-2 -->
+- [/] Implement website core <!-- id: 3 -->
+    - [x] Install Node.js (Prerequisite) <!-- id: 3-0 -->
+    - [x] Setup Next.js project <!-- id: 3-1 -->
+    - [x] Create layout and core styles (Hakurei Shrine Theme) <!-- id: 3-2 -->
+    - [x] Implement immersive landing page with animations <!-- id: 3-3 -->
+    - [x] Build News/Announcements section <!-- id: 3-4 -->
+    - [x] Build Diary/DevLog section <!-- id: 3-5 -->
+    - [x] Build Character Introduction section <!-- id: 3-6 -->
+- [x] Verify website implementation <!-- id: 4 -->
+    - [x] Verify animations and responsiveness (Build Check) <!-- id: 4-1 -->
+    - [x] Check content management flow <!-- id: 4-2 -->
+- [/] Implement Admin System (CMS) <!-- id: 5 -->
+    - [x] Setup Authentication (NextAuth.js) <!-- id: 5-1 -->
+    - [x] Create API Routes for Data Management (News/Characters) <!-- id: 5-2 -->
+    - [x] Build Admin Dashboard UI <!-- id: 5-3 -->
+    - [/] Verify Admin functionality <!-- id: 5-4 -->

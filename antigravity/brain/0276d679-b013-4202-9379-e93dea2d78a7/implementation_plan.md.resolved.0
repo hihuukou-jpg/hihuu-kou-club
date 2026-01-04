@@ -1,0 +1,29 @@
+# UI and Navigation Refinement Plan
+
+## Goal Description
+Update the website's UI text to be more concise and consistently English, and fix layout issues with the logo in the navigation bar.
+
+## Proposed Changes
+
+### UI Text Updates
+#### [MODIFY] [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+- Update menu items to English:
+    - "ホーム" -> "HOME"
+    - "ニュース" -> "NEWS"
+    - "作品" -> "CONTENT" (or "WORKS" - user asked for CONTENT in context of section title, will stick to CONTENT for consistency or clarify)
+    - "キャラクター" -> "CHARACTERS"
+    - "日記" -> "DIARY"
+- Ensure specific styling for the Logo text "秘封工倶楽部" to prevent wrapping.
+
+#### [MODIFY] [page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/page.js)
+- Change section header "MUSIC VIDEO / CONTENT" to "CONTENT".
+
+### Layout Fixes
+#### [MODIFY] [globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css)
+- Add utility class or modify existing styles to ensure the logo text `whitespace-nowrap` if not already handled in Tailwind classes within the component.
+
+## Verification Plan
+### Manual Verification
+- Check the Navigation bar to ensure all links are in English.
+- Resize the browser window to verify the logo text does not wrap or break layout.
+- Verify the main page section title reads "CONTENT".

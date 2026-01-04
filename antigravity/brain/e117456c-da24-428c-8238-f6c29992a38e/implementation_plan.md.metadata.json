@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary":  "Plan to migrate News, Diary, and other data sources from local JSON to Supabase.",
+  "updatedAt":  "2026-01-04T15:16:41.979697700Z"
+}

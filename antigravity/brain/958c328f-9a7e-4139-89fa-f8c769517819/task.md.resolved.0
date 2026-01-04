@@ -1,0 +1,11 @@
+# Tasks
+
+- [ ] Refine UI Text & Layout
+    - [ ] Update Navigation.js labels to English
+    - [ ] Fix Navbar Logo Text Layout (prevent wrapping)
+    - [ ] Update VideoSection.js title to "CONTENT"
+- [ ] Migrate to Supabase
+    - [ ] Create Implementation Plan
+    - [ ] Setup Supabase Client
+    - [ ] Refactor API Routes (News, Diary, Characters, Videos)
+    - [ ] Verify Supabase Connection and Data

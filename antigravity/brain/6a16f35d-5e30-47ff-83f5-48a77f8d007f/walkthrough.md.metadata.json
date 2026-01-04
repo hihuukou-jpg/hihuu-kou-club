@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary":  "Documentation of the successful manual deployment process to Vercel, including critical configuration fixes for Environment Variables and Framework Presets.",
+  "updatedAt":  "2026-01-04T16:02:13.976559300Z"
+}

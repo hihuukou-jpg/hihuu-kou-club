@@ -1,0 +1,50 @@
+# Deployment Guide: Hifuu Kou Club
+
+Since I cannot execute `npm` or `git` commands in your current environment, please follow these manual steps to deploy your application.
+
+## Prerequisites
+- **Outcome**: A live website hosted on Vercel.
+- **Tools Required**: `npm`, `git`, Vercel Account, GitHub Account.
+
+## Step 1: Local Verification
+Before deploying, ensure the application builds locally to avoid deployment errors.
+
+1. Open your terminal in `hifuu-kou-club`.
+2. Run the build command:
+   ```bash
+   npm run build
+   ```
+3. **If it fails**: Fix the errors (usually missing env vars or syntax errors).
+4. **If it succeeds**: Proceed to step 2.
+
+## Step 2: Push to GitHub
+Ensure your latest code is on GitHub.
+
+1. Commit your changes:
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   ```
+2. Push to your repository:
+   ```bash
+   git push origin main
+   ```
+
+## Step 3: Deploy to Vercel
+
+1. **Log in** to [Vercel](https://vercel.com).
+2. Click **"Add New..."** -> **"Project"**.
+3. **Import** your GitHub repository (`hifuu-kou-club` or the parent repo).
+4. **Configure Project**:
+   - **Framework Preset**: Next.js
+   - **Root Directory**: **IMPORTANT!** Click "Edit" and select `hifuu-kou-club`.
+   - **Environment Variables**: Add the following keys from your `.env.local` or Supabase project:
+     - `NEXT_PUBLIC_SUPABASE_URL`
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+     - (Any others you use, e.g., `SUPABASE_SERVICE_ROLE_KEY` if used in API routes, though usually only anon/url are needed for client, service role for sensitive API).
+5. Click **"Deploy"**.
+
+## Step 4: Verify
+- Visit the deployment URL provided by Vercel.
+- Check the console and network tab if data isn't loading.
+- Verify "Content", "News", "Diary" pages work.

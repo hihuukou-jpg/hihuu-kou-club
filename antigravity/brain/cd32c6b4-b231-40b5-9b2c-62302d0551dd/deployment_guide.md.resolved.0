@@ -1,0 +1,58 @@
+# 公開（デプロイ）手順ガイド
+
+コードとデータベース（Supabase）の準備は完了しました！
+あとは、このWebサイトのプログラムをインターネット上のサーバー（Vercel）に置けば、誰でもアクセスできるようになります。
+
+## 手順1: GitHubにアップロード
+
+まず、手元のコードをGitHubに保存します。
+
+1.  [GitHub](https://github.com/) にログインし、「New repository」から新しいリポジトリを作成します（例: `hifuu-kou-club`）。
+    *   "Public" か "Private" かは自由ですが、見られたくないコードがなければ "Public" でOKです。
+2.  VS Codeのターミナルを開き、以下のコマンドを順番に実行してコードをアップロードします。
+    （※もし既にGitを使っている場合は、いつもの手順でPushしてください）
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/あなたのユーザー名/hifuu-kou-club.git
+git push -u origin main
+```
+*(※ `https://github.com/...` のURLは、作成したリポジトリの画面にあるものをコピーしてください)*
+
+## 手順2: Vercelにデプロイ
+
+次に、Vercel（サーバー）とGitHubを連携させます。
+
+1.  [Vercel](https://vercel.com/) にアクセスし、GitHubアカウントでログインします。
+2.  「Add New...」 -> 「Project」をクリックします。
+3.  先ほどアップロードした `hifuu-kou-club` リポジトリの横にある「Import」ボタンを押します。
+
+## 手順3: 環境変数の設定 (重要)
+
+Vercelのインポート設定画面にある **"Environment Variables"** という項目を開き、以下の変数を登録していきます。
+（`.env` ファイルの中身と同じものを登録します）
+
+| Key (名前) | Value (値) |
+| :--- | :--- |
+| `ADMIN_USER` | `renko` (または設定したいユーザー名) |
+| `ADMIN_PASS` | `merry` (または設定したいパスワード) |
+| `NEXTAUTH_SECRET` | `secret` (※本番用にランダムな長い文字列に変えるのが推奨) |
+| `NEXTAUTH_URL` | あなたのサイトのURL (デプロイ後に決まりますが、一旦空欄でも動く場合が多いです。エラーが出る場合は `https://あなたのプロジェクト名.vercel.app` を設定) |
+| `SUPABASE_URL` | `https://nandknjllduejnwwkcte.supabase.co` |
+| `SUPABASE_ANON_KEY` | `sb_publishable_...` (コピーしたものを貼り付け) |
+| `SUPABASE_SERVICE_ROLE_KEY` | `sb_secret_...` (コピーしたものを貼り付け) |
+
+## 手順4: デプロイ実行
+
+設定が終わったら、下の **「Deploy」** ボタンを押します。
+1分〜2分ほどでビルドが完了し、花吹雪が舞えば成功です！
+表示されたURLをクリックすると、世界中からあなたのサイトにアクセスできます。
+
+---
+
+### デプロイ後の作業
+
+データ（ニュース、動画など）は空の状態なので、公開されたサイトの `/admin` にアクセスし、ログインしてデータを登録してください。

@@ -1,0 +1,85 @@
+# Implementation Plan - Hifuu Kou Club Website
+
+Create a high-quality, animated website for "Hifuu Kou Club".
+**Design Twist**: The user wants the structure/animations to feel like *Arknights: Endfield* (smooth, immersive, interactive), but the **visual aesthetic** must be **Hakurei Shrine / Youkai / Traditional Japanese (Wa)** style.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Design Philosophy**: "Cyber-Shrine" / "Mystic-Modern".
+> - **Visuals**: Red & White (Hakurei colors), Traditional patterns (clouds, waves), Calligraphy fonts, "Youkai" mist/aura effects.
+> - **Motion**: The "Endfield" feel will be achieved through smooth transitions, parallax depths, and UI interactivity, but utilizing "Wa" elements (e.g., sliding shoji screens instead of sci-fi shutters, floating talismans/ofuda instead of holographic data).
+
+## Proposed Changes
+
+### Project Structure (Next.js)
+
+#### [NEW] [Project Setup]
+Initialize a new Next.js application.
+- `app/layout.js`: Main layout with persistent navigation (Torii gate or Shrine archway motifs).
+- `app/page.js`: Immersive Landing Page.
+- `app/news/page.js`: Announcements list (Scroll / Ema style).
+- `app/diary/page.js`: DevLog/Diary list (Washi paper / Scroll style).
+- `app/characters/page.js`: Character showcase (Sliding screens / Folding screen effect).
+- `components/`: UI components.
+
+### Design & Animations (Hakurei/Wa Style)
+
+#### [NEW] [Styles & Asset Generation]
+- **Theme**:
+    - **Colors**: Vermilion Red (Shrine), Paper White, Sumi Ink Black, Pale Sakura Pink.
+    - **Typography**: Serif / Mincho fonts for elegance.
+- **Animations (Framer Motion)**:
+    - **Intro**: Ink wash spreading or a Torii gate corridor sequence.
+    - **Parallax**: Floating cherry blossoms, spirit orbs (Hitodama), or Japanese clouds.
+    - **UI Elements**: Buttons that react like striking a talisman or brushing ink.
+
+### Content Management
+
+#### [NEW] [Data Source]
+- Keep using local JSON/Markdown for simplicity.
+- `data/news.json`
+- `data/diary.json`
+- `data/characters.json`
+
+### One-Page Scroll Layout
+- **Goal**: Convert separate pages into a single scrolling experience.
+- **Refactor**:
+    - Extract `News` logic to `components/NewsSection.js`.
+    - Extract `Diary` logic to `components/DiarySection.js`.
+    - Create `components/CharacterSection.js` (New Design).
+    - Update `app/page.js` to stack these components.
+    - Update `Navigation.js` to use anchor links.
+
+### Character Section Redesign (Endfield Style)
+- **Reference**: Arknights: Endfield "Operator Info" screen.
+- **Layout**:
+    - **Left**: Vertical avatar list for selection.
+    - **Center/Right**: Large character illustration.
+    - **Overlay**: "Technical" UI elements, large typography for names, role tags.
+- **Assets**: Placeholder images generated for Renko/Merry.
+
+### Admin System (CMS)
+
+#### [NEW] [Authentication]
+- **Library**: `next-auth` (Credentials Provider).
+- **Strategy**: Simple username/password environment variables for the "Hifuu Kou Club" admins.
+
+#### [NEW] [Admin Dashboard]
+- `app/admin/page.js`: Dashboard overview.
+- `app/api/news/route.js`: POST/PUT/DELETE for news.
+- `app/api/characters/route.js`: POST/PUT/DELETE for characters.
+- **UI**:
+    - **News Editor**: Form to add/edit news items.
+    - **Character Manager**: List view to add/remove characters.
+
+## Verification Plan
+
+### Automated Tests
+- Build verification (`npm run build`).
+- Lint checks.
+
+### Manual Verification
+- **Visual Check**: Verify the entry animation accurately conveys the requested atmosphere.
+- **Responsiveness**: Ensure the complex layout works on mobile.
+- **Navigation**: Test routing between Home, News, and Diary.
