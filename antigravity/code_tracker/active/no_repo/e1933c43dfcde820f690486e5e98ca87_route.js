@@ -1,7 +1,7 @@
-’import { NextResponse } from 'next/server';
+ºimport { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { supabase } from '../../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../../lib/supabase';
 
 export async function POST(request) {
     const session = await getServerSession(authOptions);
@@ -22,7 +22,11 @@ export async function POST(request) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        const { data, error } = await supabase
+        // Use Admin client to bypass RLS for uploads
+        // If supabaseAdmin is missing (no service key), fall back to public client (might fail)
+        const client = supabaseAdmin || supabase;
+
+        const { data, error } = await client
             .storage
             .from('uploads')
             .upload(filePath, buffer, {
@@ -31,6 +35,7 @@ export async function POST(request) {
             });
 
         if (error) {
+            console.error("Supabase Storage Error:", error);
             throw error;
         }
 
@@ -41,45 +46,40 @@ export async function POST(request) {
 
         return NextResponse.json({ url: publicUrl });
     } catch (error) {
-        return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+        console.error("Upload Route Error:", error);
+        return NextResponse.json({ error: 'Upload failed', details: error.message }, { status: 500 });
     }
 }
-§ *cascade08§•*cascade08•ß *cascade08ß®*cascade08®© *cascade08©¨*cascade08¨Ø *cascade08Ø∞*cascade08∞∑ *cascade08∑∆*cascade08∆» *cascade08»Ã*cascade08Ã— *cascade08—“*cascade08“‚ *cascade08‚„*cascade08„À *cascade08ÀŒ*cascade08Œ€ *cascade08€‹*cascade08‹ﬁ *cascade08ﬁ‡*cascade08‡‚ *cascade08‚„*cascade08„‰ *cascade08‰Í*cascade08Í¸ *cascade08¸˛*cascade08˛ˇ *cascade08ˇÅ*cascade08ÅÇ *cascade08ÇÑ*cascade08Ñá *cascade08áã*cascade08ãç *cascade08çé*cascade08éè *cascade08èê*cascade08êë *cascade08ëí*cascade08íì *cascade08ìù*cascade08ùû *cascade08û°*cascade08°¢ *cascade08¢•*cascade08•¶ *cascade08¶Æ*cascade08ÆØ *cascade08Ø±*cascade08±≤ *cascade08≤¥*cascade08¥∂ *cascade08∂∑*cascade08∑π *cascade08πæ*cascade08æø *cascade08øÃ*cascade08ÃË *cascade08ËÎ*cascade08ÎÔ *cascade08Ô*cascade08Û *cascade08Ûı*cascade08ıÇ *cascade08ÇÑ*cascade08ÑÜ *cascade08Üâ*cascade08âã *cascade08ãå*cascade08åç *cascade08çì*cascade08ìï *cascade08ïô*cascade08ôö *cascade08öù*cascade08ù† *cascade08†°*cascade08°¢ *cascade08¢£*cascade08£§ *cascade08§¶*cascade08¶≤ *cascade08≤∏*cascade08∏π *cascade08π∫*cascade08∫ª *cascade08ªæ*cascade08æÃ *cascade08ÃÕ*cascade08ÕŒ *cascade08Œ—*cascade08—“ *cascade08“”*cascade08”Ÿ *cascade08Ÿ€*cascade08€Ê *cascade08ÊË*cascade08ËÈ *cascade08È˜*cascade08˜˙ *cascade08˙É*cascade08Éì *cascade08ìö*cascade08öõ *cascade08õ£*cascade08£ß *cascade08ß≠*cascade08≠Æ *cascade08Æ∞*cascade08∞≤ *cascade08≤¿*cascade08¿¡ *cascade08¡¬*cascade08¬ƒ *cascade08ƒ∆*cascade08∆» *cascade08»Ã*cascade08ÃÕ *cascade08Õ⁄*cascade08⁄‡ *cascade08‡í	*cascade08í	ß	 *cascade08ß	∞	*cascade08∞	±	 *cascade08±	≤	*cascade08≤	≥	 *cascade08≥	ª	*cascade08ª	º	 *cascade08º	ﬂ	*cascade08ﬂ	‡	 *cascade08‡	Á	*cascade08Á	Ë	 *cascade08Ë	Ù	*cascade08Ù	ı	 *cascade08ı	Ä
-*cascade08Ä
-Å
- *cascade08Å
-ë
-*cascade08ë
-í
- *cascade08í
-ì
-*cascade08ì
-î
- *cascade08î
-ô
-*cascade08ô
-ö
- *cascade08ö
+§ *cascade08§•*cascade08•ß *cascade08ß®*cascade08®© *cascade08©¨*cascade08¨Æ *cascade08ÆΩΩæ *cascade08æø*cascade08ø∆ *cascade08∆’*cascade08’◊ *cascade08◊€*cascade08€‡ *cascade08‡·*cascade08·Ò *cascade08ÒÚ*cascade08Ú⁄ *cascade08⁄›*cascade08›Í *cascade08ÍÎ*cascade08ÎÌ *cascade08ÌÔ*cascade08ÔÒ *cascade08ÒÚ*cascade08ÚÛ *cascade08Û˘*cascade08˘ã *cascade08ãç*cascade08çé *cascade08éê*cascade08êë *cascade08ëì*cascade08ìñ *cascade08ñö*cascade08öú *cascade08úù*cascade08ùû *cascade08ûü*cascade08ü† *cascade08†°*cascade08°¢ *cascade08¢¨*cascade08¨≠ *cascade08≠∞*cascade08∞± *cascade08±¥*cascade08¥µ *cascade08µΩ*cascade08Ωæ *cascade08æ¿*cascade08¿¡ *cascade08¡√*cascade08√≈ *cascade08≈∆*cascade08∆» *cascade08»Õ*cascade08ÕŒ *cascade08Œ€*cascade08€˜ *cascade08˜˙*cascade08˙˛ *cascade08˛ˇ*cascade08ˇÇ *cascade08ÇÑ*cascade08Ñâ *cascade08â◊◊ﬂ *cascade08ﬂ·*cascade08·„ *cascade08„Ê*cascade08ÊË *cascade08ËÈ*cascade08ÈÍ *cascade08Í*cascade08Ú *cascade08Úˆ*cascade08ˆ˜ *cascade08˜˙*cascade08˙˝ *cascade08˝Ä	Ä	Å	 *cascade08Å	É	É	ç	 *cascade08ç	ì	*cascade08ì	î	 *cascade08î	ï	*cascade08ï	ñ	 *cascade08ñ	ô	*cascade08ô	ß	 *cascade08ß	®	*cascade08®	©	 *cascade08©	¨	*cascade08¨	≠	 *cascade08≠	Æ	*cascade08Æ	¥	 *cascade08¥	∂	*cascade08∂	¡	 *cascade08¡	√	*cascade08√	ƒ	 *cascade08ƒ	“	*cascade08“	’	 *cascade08’	ﬁ	*cascade08ﬁ	Ó	 *cascade08Ó	ı	*cascade08ı	ˆ	 *cascade08ˆ	˛	*cascade08˛	Ç
+ *cascade08Ç
+à
+*cascade08à
+â
+ *cascade08â
+ã
+*cascade08ã
+ç
+ *cascade08ç
+õ
+*cascade08õ
+ú
+ *cascade08ú
 ù
 *cascade08ù
-—
- *cascade08—
+ü
+ *cascade08ü
+°
+*cascade08°
+£
+ *cascade08£
+ß
+*cascade08ß
+®
+ *cascade08®
+µ
+*cascade08µ
+ª
+ *cascade08ª
 ”
-*cascade08”
-’
- *cascade08’
-÷
-*cascade08÷
-◊
- *cascade08◊
-ÿ
-*cascade08ÿ
-Ÿ
- *cascade08Ÿ
-⁄
-*cascade08⁄
-€
- *cascade08€
-‹
-*cascade08‹
-’ *cascade082Efile:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/upload/route.js
+ *cascade08”
+ëë´ *cascade08´¿ *cascade08¿…*cascade08…  *cascade08 À*cascade08ÀÃ *cascade08Ã‘*cascade08‘’ *cascade08’¯*cascade08¯˘ *cascade08˘Ä*cascade08ÄÅ *cascade08Åç*cascade08çé *cascade08éô*cascade08ôö *cascade08ö™*cascade08™´ *cascade08´¨*cascade08¨≠ *cascade08≠≤*cascade08≤≥ *cascade08≥∂*cascade08∂Í *cascade08ÍÏ*cascade08ÏÓ *cascade08ÓÔ*cascade08Ô *cascade08Ò*cascade08ÒÚ *cascade08ÚÛ*cascade08ÛÙ *cascade08Ùı*cascade08ıî *cascade08î  É *cascade08Éõõº *cascade082Efile:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/upload/route.js
