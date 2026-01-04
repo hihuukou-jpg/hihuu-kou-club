@@ -1,39 +1,34 @@
-# Responsive Design Implementation Plan
+# Public Read-Only Admin Dashboard
 
-Make the website usable and beautiful on all screen sizes (Mobile, Tablet, Desktop).
+Allow anyone (listeners) to view the Admin Dashboard stats/content, but restrict adding, editing, or deleting content to authenticated Admins only.
 
 ## User Review Required
-> [!NOTE]
-> I will use standard breakpoints (Mobile: <768px).
+> [!IMPORTANT]
+> The `/admin` page will now be visible to everyone. Sensitive data (if any) should be hidden. Currently, it only shows News, Characters, Diary, and Videos, which are public anyway.
 
 ## Proposed Changes
 
-### Global CSS ([app/globals.css](file:///C:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css))
-- Add Media Query variables or utility classes if needed.
+### Middleware ([middleware.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/middleware.js))
+- [MODIFY] Remove `/admin` from the matcher so it is NOT automatically blocked.
+- [KEEP] We still need `next-auth` to handle the actual API route protection or use client-side checks for the button actions.
 
-### Navigation ([components/Navigation.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js))
-- [MODIFY] Switch to a hamburger menu on small screens.
-- [MODIFY] Adjust padding and font sizes.
+### Admin Page ([app/admin/page.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js))
+- [MODIFY] **Remove** the `useEffect` dependency on `session`. Always fetch data on mount so everyone can see it.
+- [MODIFY] **Conditional Rendering**:
+    - If `!session` (Guest): Show the lists (News, Diary, etc.) but **HIDE** the forms (Add/Edit) and **HIDE** delete buttons.
+    - Show a "Login" button instead of "Logout" for guests.
+- [MODIFY] **Login Flow**: Clicking "Login" should trigger `signIn()`.
 
-### Hero Section ([components/Hero.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/Hero.js))
-- [MODIFY] Adjust vertical text size and positioning for mobile.
-- [MODIFY] Ensure background elements don't overflow.
-
-### Character Section ([components/CharacterSection.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js))
-- [MODIFY] Change from "Left Sidebar + Right Content" to "Top Scrollable List + Bottom Content" (or stacked).
-- [MODIFY] Resize character images and description box to fit vertical screens.
-
-### Other Sections
-- **News/Videos**: Ensure grids turn into single columns (flex-wrap/grid-template-columns).
+### API Routes
+- [KEEP] API Routes ([POST](file:///C:/Users/kouki/.gemini/hifuu-kou-club/app/api/news/route.js#21-47), `DELETE`) are already protected by `getServerSession` in the backend code (confirmed in previous checks). This ensures even if a hacker forces the UI to show buttons, the server will reject the request.
 
 ## Verification Plan
 
 ### Manual Verification
-1. Use Chrome Developer Tools (Device Mode) to test:
-   - iPhone SE / 12 / 14 Pro
-   - iPad Air
-   - Desktop (1920x1080)
-2. Verify:
-   - No horizontal scrolling (overflow-x hidden).
-   - Text is readable.
-   - Buttons are clickable (touch targets).
+1. Open `/admin` in Incognito (Guest).
+   - Should see the Dashboard content.
+   - Should NOT see "Add News" forms.
+   - Should see "Login" button.
+2. Click "Login" -> Enter Admin Creds.
+3. Redirect back to `/admin`.
+   - Should see Forms and Delete buttons.

@@ -13,6 +13,10 @@
 - [x] Secure Admin Page
     - [x] Create middleware.js to protect /admin
     - [x] Verify functionality
+- [x] Configure Admin Credentials (Guidance Provided)
+- [x] Implment Read-Only Admin Dashboard
+    - [x] Unlock middleware
+    - [x] Update admin page UI (Hide forms for guests)
 
 # Responsive Design Tasks
 - [x] Analyze current layout

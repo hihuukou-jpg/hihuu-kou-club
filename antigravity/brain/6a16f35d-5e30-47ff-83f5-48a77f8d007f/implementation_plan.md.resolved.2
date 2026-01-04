@@ -1,0 +1,34 @@
+# Public Read-Only Admin Dashboard
+
+Allow anyone (listeners) to view the Admin Dashboard stats/content, but restrict adding, editing, or deleting content to authenticated Admins only.
+
+## User Review Required
+> [!IMPORTANT]
+> The `/admin` page will now be visible to everyone. Sensitive data (if any) should be hidden. Currently, it only shows News, Characters, Diary, and Videos, which are public anyway.
+
+## Proposed Changes
+
+### Middleware ([middleware.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/middleware.js))
+- [MODIFY] Remove `/admin` from the matcher so it is NOT automatically blocked.
+- [KEEP] We still need `next-auth` to handle the actual API route protection or use client-side checks for the button actions.
+
+### Admin Page ([app/admin/page.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js))
+- [MODIFY] **Remove** the `useEffect` dependency on `session`. Always fetch data on mount so everyone can see it.
+- [MODIFY] **Conditional Rendering**:
+    - If `!session` (Guest): Show the lists (News, Diary, etc.) but **HIDE** the forms (Add/Edit) and **HIDE** delete buttons.
+    - Show a "Login" button instead of "Logout" for guests.
+- [MODIFY] **Login Flow**: Clicking "Login" should trigger `signIn()`.
+
+### API Routes
+- [KEEP] API Routes ([POST](file:///C:/Users/kouki/.gemini/hifuu-kou-club/app/api/news/route.js#21-47), `DELETE`) are already protected by `getServerSession` in the backend code (confirmed in previous checks). This ensures even if a hacker forces the UI to show buttons, the server will reject the request.
+
+## Verification Plan
+
+### Manual Verification
+1. Open `/admin` in Incognito (Guest).
+   - Should see the Dashboard content.
+   - Should NOT see "Add News" forms.
+   - Should see "Login" button.
+2. Click "Login" -> Enter Admin Creds.
+3. Redirect back to `/admin`.
+   - Should see Forms and Delete buttons.
