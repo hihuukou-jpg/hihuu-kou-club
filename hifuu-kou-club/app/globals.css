@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Oswald:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+:root {
+  /* Mystical Hakurei Palette */
+  --hakurei-red: #C41A30;
+  --hakurei-white: #F9F8F6;
+  --sumi-black: #1F1F1F;
+
+  --sakura-pink: #FEE7EB;
+  --spirit-gold: #D4AF37;
+
+  /* Industrial Palette */
+  --industrial-yellow: #FFD700;
+  --industrial-black: #0a0a0a;
+  --tech-cyan: #00E5FF;
+
+  --text-main: #2C2C2C;
+  --text-dim: #888888;
+
+  /* Typography */
+  --font-serif: 'Shippori Mincho', serif;
+  --font-display: 'Oswald', sans-serif;
+  --font-tech: 'Share Tech Mono', monospace;
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: var(--hakurei-white);
+  color: var(--text-main);
+  font-family: var(--font-serif);
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+  /* Fix for sticky header covering content */
+}
+
+/* Washi Texture Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: -1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+a:hover {
+  opacity: 0.7;
+}
