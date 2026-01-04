@@ -5,9 +5,14 @@ import { useEffect, useState } from 'react';
 
 export default function Hero() {
     const [mounted, setMounted] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
@@ -66,14 +71,14 @@ export default function Hero() {
                         writingMode: 'vertical-rl',
                         textOrientation: 'upright',
                         fontFamily: 'var(--font-serif)',
-                        fontSize: 'clamp(3rem, 6vw, 5rem)',
-                        letterSpacing: '0.8em',
+                        fontSize: isMobile ? '3rem' : 'clamp(3rem, 6vw, 5rem)', // Smaller font on mobile
+                        letterSpacing: isMobile ? '0.5em' : '0.8em', // Tighter spacing on mobile
                         color: 'var(--text-main)',
                         height: 'auto',
                         marginBottom: '2rem',
                         borderRight: '1px solid var(--hakurei-red)',
-                        paddingRight: '2rem',
-                        marginRight: '2rem'
+                        paddingRight: isMobile ? '1.5rem' : '2rem',
+                        marginRight: isMobile ? '1.5rem' : '2rem'
                     }}
                 >
                     秘封工倶楽部
@@ -86,7 +91,7 @@ export default function Hero() {
                     transition={{ delay: 1.5, duration: 1.5 }}
                     style={{
                         fontFamily: 'var(--font-serif)',
-                        fontSize: '1.2rem',
+                        fontSize: isMobile ? '1rem' : '1.2rem',
                         color: 'var(--hakurei-red)',
                         letterSpacing: '0.2em',
                         marginTop: '1rem'
@@ -107,8 +112,8 @@ export default function Hero() {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: '60vh',
-                    height: '60vh',
+                    width: isMobile ? '40vh' : '60vh', // Smaller circle on mobile
+                    height: isMobile ? '40vh' : '60vh',
                     border: '1px solid var(--hakurei-red)',
                     borderRadius: '50%',
                     zIndex: 0

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 const navItems = [
     { name: 'HOME', id: 'hero' },
@@ -12,6 +13,24 @@ const navItems = [
 ];
 
 export default function Navigation() {
+    const [isMobile, setIsMobile] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+            if (window.innerWidth >= 768) {
+                setIsOpen(false);
+            }
+        };
+
+        // Initial check
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <motion.nav
             initial={{ y: -100, opacity: 0 }}
@@ -26,8 +45,8 @@ export default function Navigation() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '2rem 3rem',
-                background: 'rgba(249, 248, 246, 0.8)',
+                padding: isMobile ? '1rem 1.5rem' : '2rem 3rem',
+                background: 'rgba(249, 248, 246, 0.9)',
                 backdropFilter: 'blur(8px)',
                 borderBottom: '1px solid rgba(0,0,0,0.05)'
             }}
@@ -35,7 +54,8 @@ export default function Navigation() {
             {/* Logo Area */}
             <Link href="/#hero" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 <div style={{
-                    width: '32px', height: '32px',
+                    width: isMobile ? '28px' : '32px',
+                    height: isMobile ? '28px' : '32px',
                     background: 'var(--hakurei-red)',
                     borderRadius: '50%',
                     display: 'grid', placeItems: 'center'
@@ -44,7 +64,7 @@ export default function Navigation() {
                 </div>
                 <span style={{
                     fontFamily: 'var(--font-serif)',
-                    fontSize: '1.4rem',
+                    fontSize: isMobile ? '1.1rem' : '1.4rem',
                     fontWeight: 'bold',
                     color: 'var(--text-main)',
                     letterSpacing: '0.1em',
@@ -54,41 +74,133 @@ export default function Navigation() {
                 </span>
             </Link>
 
-            {/* Nav Items */}
-            <ul style={{ display: 'flex', gap: '3rem', listStyle: 'none' }}>
-                {navItems.map((item) => (
-                    <li key={item.name}>
+            {/* Desktop Nav */}
+            {!isMobile && (
+                <ul style={{ display: 'flex', gap: '3rem', listStyle: 'none' }}>
+                    {navItems.map((item) => (
+                        <li key={item.name}>
+                            <Link
+                                href={`/#${item.id}`}
+                                style={{
+                                    position: 'relative',
+                                    fontSize: '0.95rem',
+                                    fontFamily: 'var(--font-serif)',
+                                    color: 'var(--text-main)',
+                                    textDecoration: 'none',
+                                    letterSpacing: '0.05em'
+                                }}
+                            >
+                                {item.name}
+                            </Link>
+                        </li>
+                    ))}
+                    <li>
                         <Link
-                            href={`/#${item.id}`}
+                            href="/admin"
                             style={{
-                                position: 'relative',
-                                fontSize: '0.95rem',
+                                fontSize: '0.9rem',
                                 fontFamily: 'var(--font-serif)',
-                                color: 'var(--text-main)',
-                                textDecoration: 'none',
-                                letterSpacing: '0.05em'
+                                color: 'var(--hakurei-red)',
+                                border: '1px solid var(--hakurei-red)',
+                                padding: '0.4rem 1rem',
+                                borderRadius: '20px'
                             }}
                         >
-                            {item.name}
+                            ADMIN
                         </Link>
                     </li>
-                ))}
-                <li>
-                    <Link
-                        href="/admin"
+                </ul>
+            )}
+
+            {/* Mobile Hamburger Button */}
+            {isMobile && (
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        zIndex: 101, // Above the menu
+                        padding: '0.5rem'
+                    }}
+                >
+                    <div style={{
+                        width: '24px', height: '2px',
+                        background: isOpen ? '#333' : 'var(--hakurei-red)',
+                        marginBottom: '5px',
+                        transform: isOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none',
+                        transition: 'all 0.3s'
+                    }}></div>
+                    <div style={{
+                        width: '24px', height: '2px',
+                        background: isOpen ? 'transparent' : 'var(--hakurei-red)',
+                        marginBottom: '5px',
+                        transition: 'all 0.3s'
+                    }}></div>
+                    <div style={{
+                        width: '24px', height: '2px',
+                        background: isOpen ? '#333' : 'var(--hakurei-red)',
+                        transform: isOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none',
+                        transition: 'all 0.3s'
+                    }}></div>
+                </button>
+            )}
+
+            {/* Mobile Menu Overlay */}
+            <AnimatePresence>
+                {isMobile && isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
                         style={{
-                            fontSize: '0.9rem',
-                            fontFamily: 'var(--font-serif)',
-                            color: 'var(--hakurei-red)',
-                            border: '1px solid var(--hakurei-red)',
-                            padding: '0.4rem 1rem',
-                            borderRadius: '20px'
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            width: '100%',
+                            background: '#fff',
+                            borderBottom: '1px solid #eee',
+                            boxShadow: '0 5px 10px rgba(0,0,0,0.05)',
+                            padding: '1rem 0',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '1.5rem'
                         }}
                     >
-                        ADMIN
-                    </Link>
-                </li>
-            </ul>
+                        {navItems.map((item) => (
+                            <Link
+                                key={item.name}
+                                href={`/#${item.id}`}
+                                onClick={() => setIsOpen(false)}
+                                style={{
+                                    fontSize: '1rem',
+                                    fontFamily: 'var(--font-serif)',
+                                    color: 'var(--text-main)',
+                                    textDecoration: 'none',
+                                    padding: '0.5rem'
+                                }}
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                        <Link
+                            href="/admin"
+                            onClick={() => setIsOpen(false)}
+                            style={{
+                                fontSize: '0.9rem',
+                                color: 'var(--hakurei-red)',
+                                border: '1px solid var(--hakurei-red)',
+                                padding: '0.4rem 1.5rem',
+                                borderRadius: '20px',
+                                marginTop: '0.5rem'
+                            }}
+                        >
+                            ADMIN
+                        </Link>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.nav>
     );
 }

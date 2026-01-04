@@ -6,14 +6,21 @@ import { useState, useEffect } from 'react';
 export default function CharacterSection() {
     const [data, setData] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
         fetch('/api/characters')
             .then((res) => res.json())
             .then((data) => {
                 setData(data);
                 if (data.length > 0) setSelectedId(data[0].id);
             });
+
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     if (!data || data.length === 0) return null;
@@ -28,26 +35,33 @@ export default function CharacterSection() {
             color: '#333',
             overflow: 'hidden',
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row', // Stack on mobile
         }}>
 
-            {/* Left Sidebar: Endfield Style Selector */}
+            {/* Selector Sidebar (Left on Desktop, Top on Mobile) */}
             <div style={{
-                width: '120px',
-                height: '100vh',
+                width: isMobile ? '100%' : '120px',
+                height: isMobile ? 'auto' : '100vh',
                 background: '#fff',
-                borderRight: '1px solid #ddd',
+                borderRight: isMobile ? 'none' : '1px solid #ddd',
+                borderBottom: isMobile ? '1px solid #ddd' : 'none',
                 zIndex: 10,
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: isMobile ? 'row' : 'column', // Horizontal on mobile
+                justifyContent: isMobile ? 'center' : 'flex-start',
                 alignItems: 'center',
-                paddingTop: '100px',
+                paddingTop: isMobile ? '1rem' : '100px',
+                paddingBottom: isMobile ? '1rem' : '0',
                 gap: '1.5rem',
                 position: 'relative',
-                boxShadow: '2px 0 10px rgba(0,0,0,0.05)'
+                boxShadow: '2px 0 10px rgba(0,0,0,0.05)',
+                overflowX: isMobile ? 'auto' : 'visible' // Scrollable on mobile
             }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', marginBottom: '1rem', display: 'grid', placeItems: 'center', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-                    <span style={{ fontSize: '1.2rem', color: '#888' }}>▲</span>
-                </div>
+                {!isMobile && (
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', marginBottom: '1rem', display: 'grid', placeItems: 'center', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+                        <span style={{ fontSize: '1.2rem', color: '#888' }}>▲</span>
+                    </div>
+                )}
 
                 {data.map((char) => (
                     <button
@@ -62,7 +76,8 @@ export default function CharacterSection() {
                             padding: 0,
                             cursor: 'pointer',
                             background: 'transparent',
-                            transition: 'all 0.3s ease'
+                            transition: 'all 0.3s ease',
+                            flexShrink: 0 // Prevent shrinking on mobile
                         }}
                     >
                         {/* Avatar Image */}
@@ -76,7 +91,7 @@ export default function CharacterSection() {
                             <img src={char.image || 'https://placehold.co/100x100'} alt={char.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
 
-                        {/* Active Selection Ring (Endfield Style: Yellow/White) */}
+                        {/* Active Selection Ring */}
                         {selectedId === char.id && (
                             <motion.div
                                 layoutId="active-ring"
@@ -84,7 +99,7 @@ export default function CharacterSection() {
                                     position: 'absolute',
                                     top: '-6px', left: '-6px', right: '-6px', bottom: '-6px',
                                     borderRadius: '50%',
-                                    border: '2px solid var(--industrial-yellow)', // Keeping yellow accent for selector only
+                                    border: '2px solid var(--industrial-yellow)',
                                     borderStyle: 'dashed',
                                     animation: 'spin 10s linear infinite'
                                 }}
@@ -97,22 +112,32 @@ export default function CharacterSection() {
                                     position: 'absolute',
                                     top: '-3px', left: '-3px', right: '-3px', bottom: '-3px',
                                     borderRadius: '50%',
-                                    border: '2px solid var(--industrial-yellow)', // Keeping yellow accent for selector only
+                                    border: '2px solid var(--industrial-yellow)',
                                 }}
                             />
                         )}
                     </button>
                 ))}
 
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', marginTop: '1rem', display: 'grid', placeItems: 'center', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-                    <span style={{ fontSize: '1.2rem', color: '#888' }}>▼</span>
-                </div>
+                {!isMobile && (
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', marginTop: '1rem', display: 'grid', placeItems: 'center', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+                        <span style={{ fontSize: '1.2rem', color: '#888' }}>▼</span>
+                    </div>
+                )}
             </div>
 
-            {/* Main Content Area: Mystical / Wa Style */}
-            <div style={{ flex: 1, position: 'relative', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {/* Main Content Area */}
+            <div style={{
+                flex: 1,
+                position: 'relative',
+                height: isMobile ? 'calc(100vh - 100px)' : '100%', // Adjust height for mobile
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column' // Stack content if needed
+            }}>
 
-                {/* Background Circle (Mystical) */}
+                {/* Background Circle */}
                 <motion.div
                     key={`circle-${selectedId}`}
                     initial={{ scale: 0.8, opacity: 0 }}
@@ -120,16 +145,25 @@ export default function CharacterSection() {
                     transition={{ duration: 1 }}
                     style={{
                         position: 'absolute',
-                        width: '500px',
-                        height: '500px',
-                        background: selectedId === 'renko' ? '#EAEAF0' : '#F0EAF0', // Subtle tint change
+                        width: isMobile ? '300px' : '500px', // Smaller circle on mobile
+                        height: isMobile ? '300px' : '500px',
+                        background: selectedId === 'renko' ? '#EAEAF0' : '#F0EAF0',
                         borderRadius: '50%',
-                        zIndex: 0
+                        zIndex: 0,
+                        top: isMobile ? '10%' : 'auto' // Adjust position on mobile
                     }}
                 />
 
                 {/* Character Illustration */}
-                <div style={{ zIndex: 1, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{
+                    zIndex: 1,
+                    height: isMobile ? '50%' : '100%', // Take up less height on mobile to fit text
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: isMobile ? '1rem' : '0'
+                }}>
                     <AnimatePresence mode="wait">
                         <motion.img
                             key={selectedChar.image}
@@ -141,7 +175,9 @@ export default function CharacterSection() {
                             transition={{ duration: 0.8, ease: "easeOut" }}
                             style={{
                                 height: '90%',
-                                maxHeight: '85vh',
+                                maxHeight: isMobile ? '50vh' : '85vh',
+                                width: 'auto',
+                                maxWidth: '90%',
                                 objectFit: 'contain',
                                 filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))'
                             }}
@@ -149,13 +185,15 @@ export default function CharacterSection() {
                     </AnimatePresence>
                 </div>
 
-                {/* Description Box (Mystical Style) */}
+                {/* Description Box */}
                 <div style={{
-                    position: 'absolute',
-                    bottom: '10%',
-                    right: '5%',
-                    width: '350px',
-                    zIndex: 2
+                    position: isMobile ? 'relative' : 'absolute', // Relative flow on mobile
+                    bottom: isMobile ? 'auto' : '10%',
+                    right: isMobile ? 'auto' : '5%',
+                    width: isMobile ? '90%' : '350px', // Full width on mobile
+                    marginTop: isMobile ? '1rem' : '0',
+                    zIndex: 2,
+                    marginBottom: isMobile ? '2rem' : '0'
                 }}>
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -171,7 +209,8 @@ export default function CharacterSection() {
                                 background: 'rgba(255,255,255,0.85)',
                                 backdropFilter: 'blur(5px)',
                                 borderTop: '2px solid var(--hakurei-red)',
-                                boxShadow: '0 5px 15px rgba(0,0,0,0.05)'
+                                boxShadow: '0 5px 15px rgba(0,0,0,0.05)',
+                                borderRadius: isMobile ? '8px' : '0'
                             }}>
                                 <div style={{
                                     fontFamily: 'var(--font-serif)',

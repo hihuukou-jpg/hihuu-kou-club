@@ -1,24 +1,39 @@
-# Secure Admin Page
+# Responsive Design Implementation Plan
 
-Secure the `/admin` route so that only users with a valid ID and Password can access it.
+Make the website usable and beautiful on all screen sizes (Mobile, Tablet, Desktop).
 
 ## User Review Required
-> [!IMPORTANT]
-> You will need to manage your **Admin ID** and **Password** in Vercel's Environment Variables.
+> [!NOTE]
+> I will use standard breakpoints (Mobile: <768px).
 
 ## Proposed Changes
 
-### Root Directory
-#### [NEW] [middleware.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/middleware.js)
-- Create a middleware file to intercept requests to `/admin`.
-- If a user is not logged in (no session token), redirect them to the login page.
-- This ensures "random people" cannot even see the admin dashboard.
+### Global CSS (`app/globals.css`)
+- Add Media Query variables or utility classes if needed.
+
+### Navigation (`components/Navigation.js`)
+- [MODIFY] Switch to a hamburger menu on small screens.
+- [MODIFY] Adjust padding and font sizes.
+
+### Hero Section (`components/Hero.js`)
+- [MODIFY] Adjust vertical text size and positioning for mobile.
+- [MODIFY] Ensure background elements don't overflow.
+
+### Character Section (`components/CharacterSection.js`)
+- [MODIFY] Change from "Left Sidebar + Right Content" to "Top Scrollable List + Bottom Content" (or stacked).
+- [MODIFY] Resize character images and description box to fit vertical screens.
+
+### Other Sections
+- **News/Videos**: Ensure grids turn into single columns (flex-wrap/grid-template-columns).
 
 ## Verification Plan
 
 ### Manual Verification
-1. Open an Incognito window (or sign out).
-2. Access `/admin`.
-3. Verify you are redirected to the Login page.
-4. Enter credentials (defined in Vercel or default `renko`/`merry`).
-5. Verify access is granted.
+1. Use Chrome Developer Tools (Device Mode) to test:
+   - iPhone SE / 12 / 14 Pro
+   - iPad Air
+   - Desktop (1920x1080)
+2. Verify:
+   - No horizontal scrolling (overflow-x hidden).
+   - Text is readable.
+   - Buttons are clickable (touch targets).
