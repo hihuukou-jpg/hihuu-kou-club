@@ -1,0 +1,37 @@
+# Enhancement Plan: CONTENT Section (Video Gallery)
+
+## Goal
+Transform the current simple video list into a premium video gallery. This includes replacing direct iframe embeds with high-quality thumbnails to improve performance and aesthetics, and implementing a "Lightbox" (modal) player for a cinematic viewing experience.
+
+## User Review Required
+> [!NOTE]
+> I will use standard YouTube thumbnail URLs (e.g., `mqdefault.jpg`, `maxresdefault.jpg`) to generate previews automatically from the video ID. No manual image upload is required for videos.
+
+## Proposed Changes
+
+### Components
+
+#### [NEW] `components/VideoModal.js`
+- A reusable modal component to play videos.
+- Features:
+    - Backdrop blur overlay.
+    - Exit animation.
+    - Responsive video player container.
+
+#### [MODIFY] `components/VideoSection.js`
+- **Current State**: Renders a grid of `iframe` elements directly.
+- **Changes**:
+    - Extract YouTube ID from URL (already implemented, but will refine).
+    - Render `img` tags (thumbnails) instead of `iframe`.
+    - Add a "Play Button" overlay on hover.
+    - Implement state to track the `activeVideo` (the one currently playing).
+    - Render `VideoModal` when a video is selected.
+    - Improve grid styling for a more cohesive "gallery" look.
+
+## Verification Plan
+
+### Manual Verification
+- **Gallery View**: Check if thumbnails load correctly for all registered videos.
+- **Interaction**: Click a video -> Modal opens -> Video plays.
+- **Closing**: Click outside modal or 'X' button -> Modal closes -> Video stops.
+- **Responsiveness**: Verify layout on mobile (single column) vs desktop (grid).
