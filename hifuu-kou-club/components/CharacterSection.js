@@ -88,7 +88,7 @@ export default function CharacterSection() {
                             border: selectedId === char.id ? '2px solid transparent' : '2px solid #ddd',
                             filter: selectedId === char.id ? 'none' : 'grayscale(100%) opacity(0.7)'
                         }}>
-                            <img src={char.image || 'https://placehold.co/100x100'} alt={char.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img src={char.image_url || 'https://placehold.co/100x100'} alt={char.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         </div>
 
                         {/* Active Selection Ring */}
@@ -166,8 +166,8 @@ export default function CharacterSection() {
                 }}>
                     <AnimatePresence mode="wait">
                         <motion.img
-                            key={selectedChar.image}
-                            src={selectedChar.image}
+                            key={selectedChar.image_url}
+                            src={selectedChar.image_url}
                             alt={selectedChar.name}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}

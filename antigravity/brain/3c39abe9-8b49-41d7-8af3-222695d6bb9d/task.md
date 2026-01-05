@@ -6,6 +6,6 @@
 - [x] Fix Character Image Upload (Admin) <!-- id: 1 -->
     - [x] Implement/Fix frontend upload logic
     - [x] Implement/Fix backend upload logic
-- [ ] Fix Public Page Character Display <!-- id: 3 -->
-    - [ ] Update `components/CharacterSection.js` property access
+- [x] Fix Public Page Character Display <!-- id: 3 -->
+    - [x] Update `components/CharacterSection.js` property access
 - [ ] Verify Fix <!-- id: 2 -->
