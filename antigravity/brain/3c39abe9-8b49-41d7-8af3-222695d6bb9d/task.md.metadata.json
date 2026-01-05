@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_TASK",
+  "summary":  "Task list for fixing the character image upload issue in the admin panel. Includes investigation, fix implementation, and verification steps.",
+  "updatedAt":  "2026-01-05T04:54:17.846664400Z"
+}

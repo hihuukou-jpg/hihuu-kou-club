@@ -1,0 +1,24 @@
+# Character Image Upload Fix Implementation Plan
+
+## Goal Description
+Fix the issue where character standing pictures (t立ち絵) cannot be uploaded in the admin panel's character management section.
+
+## User Review Required
+None identified yet.
+
+## Proposed Changes
+### Admin Panel
+- [app/admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js):
+    - [ ] Inspect `handleCharacterSubmit` or similar function.
+    - [ ] Ensure file input exists and handles file selection.
+    - [ ] Ensure `FormData` is constructed correctly with the image file.
+
+### API Routes
+- `app/api/characters/route.js` (or similar):
+    - [ ] Verify `POST` and `PUT` methods handle `multipart/form-data`.
+    - [ ] Verify Supabase storage upload logic.
+
+## Verification Plan
+### Manual Verification
+- Attempt to upload an image for a new and existing character via the admin panel.
+- Verify the image appears in the list and on the public site (if applicable).
