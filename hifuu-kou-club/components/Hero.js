@@ -16,69 +16,78 @@ export default function Hero() {
     }, []);
 
     return (
-        <div id="hero" style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: '#F9F8F6' }}>
+        <div id="hero" style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', background: '#000' }}>
 
-            {/* Spiritual Background Gradient */}
+            {/* Winter Background Image */}
             <div style={{
                 position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                background: 'radial-gradient(circle at 50% 30%, #fff 0%, #FEE7EB 40%, #f4f4f4 80%)',
-                opacity: 0.8
+                backgroundImage: 'url(/hero-winter.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                zIndex: 0
             }} />
 
-            {/* Slow Sakura Particles */}
-            {mounted && [...Array(15)].map((_, i) => (
+            {/* Overlay for Contrast */}
+            <div style={{
+                position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.1) 50%, rgba(248,250,252,1) 100%)',
+                zIndex: 1
+            }} />
+
+            {/* Falling Snow Particles */}
+            {mounted && [...Array(30)].map((_, i) => (
                 <motion.div
                     key={i}
-                    initial={{ y: -50, x: Math.random() * 100 + 'vw', rotate: 0, opacity: 0 }}
+                    initial={{ y: -50, x: Math.random() * 100 + 'vw', opacity: 0 }}
                     animate={{
-                        y: '100vh',
-                        x: `calc(${Math.random() * 100}vw + ${Math.random() * 100 - 50}px)`,
-                        rotate: 360,
-                        opacity: [0, 0.6, 0]
+                        y: '105vh',
+                        x: `calc(${Math.random() * 100}vw + ${Math.random() * 50 - 25}px)`,
+                        opacity: [0, 0.8, 0]
                     }}
                     transition={{
-                        duration: 15 + Math.random() * 10, // Very slow falling
+                        duration: 8 + Math.random() * 10, // Slower snow
                         repeat: Infinity,
-                        delay: Math.random() * 8,
+                        delay: Math.random() * 5,
                         ease: "linear"
                     }}
                     style={{
                         position: 'absolute',
-                        width: '12px',
-                        height: '12px',
-                        background: '#FFB7C5',
-                        borderRadius: '100% 0 100% 0', // Simple petal shape
+                        width: Math.random() * 4 + 2 + 'px', // Varying snowflake sizes
+                        height: Math.random() * 4 + 2 + 'px',
+                        background: '#fff',
+                        borderRadius: '50%',
                         pointerEvents: 'none',
-                        zIndex: 1,
-                        filter: 'blur(1px)'
+                        zIndex: 2,
+                        filter: 'blur(0.5px)',
+                        boxShadow: '0 0 3px rgba(255,255,255,0.8)'
                     }}
                 />
             ))}
 
-            {/* Main Content: Centered, Elegant */}
+            {/* Main Content */}
             <div style={{
                 position: 'relative', zIndex: 10, height: '100%',
                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                 textAlign: 'center'
             }}>
 
-                {/* Vertical Japanese Text */}
+                {/* Vertical Japanese Text with Shadow */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 2, ease: "easeOut" }}
                     style={{
                         writingMode: 'vertical-rl',
                         textOrientation: 'upright',
                         fontFamily: 'var(--font-serif)',
-                        fontSize: isMobile ? '3rem' : 'clamp(3rem, 6vw, 5rem)', // Smaller font on mobile
-                        letterSpacing: isMobile ? '0.5em' : '0.8em', // Tighter spacing on mobile
-                        color: 'var(--text-main)',
+                        fontSize: isMobile ? '3rem' : 'clamp(3.5rem, 7vw, 6rem)',
+                        letterSpacing: isMobile ? '0.3em' : '0.5em',
+                        color: '#fff',
+                        textShadow: '0 2px 10px rgba(0,0,0,0.5), 0 0 20px rgba(185, 28, 28, 0.3)', // Red glow
                         height: 'auto',
-                        marginBottom: '2rem',
-                        borderRight: '1px solid var(--hakurei-red)',
-                        paddingRight: isMobile ? '1.5rem' : '2rem',
-                        marginRight: isMobile ? '1.5rem' : '2rem'
+                        borderRight: '2px solid rgba(255,255,255,0.7)',
+                        paddingRight: '2rem',
+                        marginRight: '1rem'
                     }}
                 >
                     秘封工倶楽部
@@ -86,35 +95,36 @@ export default function Hero() {
 
                 {/* Subtitle */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.5, duration: 1.5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1, duration: 1.5 }}
                     style={{
                         fontFamily: 'var(--font-serif)',
-                        fontSize: isMobile ? '1rem' : '1.2rem',
-                        color: 'var(--hakurei-red)',
-                        letterSpacing: '0.2em',
-                        marginTop: '1rem'
+                        fontSize: isMobile ? '1.2rem' : '1.5rem',
+                        color: '#fff',
+                        letterSpacing: '0.3em',
+                        marginTop: '2rem',
+                        textShadow: '0 1px 5px rgba(0,0,0,0.5)'
                     }}
                 >
-                    Hifuu Kou Club
+                    Hifuu Kou
                 </motion.div>
 
             </div>
 
-            {/* Decorative Circle (Enso-like but minimal) */}
+            {/* Decorative Winter Circle */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 0.1, scale: 1 }}
-                transition={{ duration: 3, ease: "easeOut" }}
+                initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
+                animate={{ opacity: 0.2, scale: 1, rotate: 360 }}
+                transition={{ duration: 20, ease: "linear", repeat: Infinity }}
                 style={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: isMobile ? '40vh' : '60vh', // Smaller circle on mobile
-                    height: isMobile ? '40vh' : '60vh',
-                    border: '1px solid var(--hakurei-red)',
+                    width: isMobile ? '50vh' : '80vh',
+                    height: isMobile ? '50vh' : '80vh',
+                    border: '2px dashed rgba(255,255,255,0.5)',
                     borderRadius: '50%',
                     zIndex: 0
                 }}

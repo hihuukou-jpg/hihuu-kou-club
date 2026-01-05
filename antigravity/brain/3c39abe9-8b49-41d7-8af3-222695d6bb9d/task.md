@@ -8,4 +8,16 @@
     - [x] Implement/Fix backend upload logic
 - [x] Fix Public Page Character Display <!-- id: 3 -->
     - [x] Update `components/CharacterSection.js` property access
-- [ ] Verify Fix <!-- id: 2 -->
+- [x] Redesign Website for Winter Theme <!-- id: 4 -->
+    - [x] Update `app/globals.css` colors
+    - [x] Update `components/Hero.js` with refined text and image
+- [x] HSR Style Redesign (Winter Edition) <!-- id: 6 -->
+    - [x] Update `app/globals.css` with HSR utility classes
+    - [x] Redesign `components/Navigation.js`
+    - [x] Redesign `components/NewsSection.js` & `DiarySection.js`
+    - [x] Redesign `components/CharacterSection.js`
+- [x] Implement Visitor Counter <!-- id: 7 -->
+    - [x] Create SQL schema `supabase_stats.sql`
+    - [x] Create API route `/api/stats`
+    - [x] Add tracking to `Navigation.js`
+    - [x] Add display to `admin/page.js`

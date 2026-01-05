@@ -1,0 +1,47 @@
+# Winter Theme Redesign Plan
+
+## Goal Description
+Redesign the website to match the atmosphere of the provided New Year/Winter illustration. The image will be used as the Hero background, and the overall color scheme will be updated to reflect the "Winter Shrine" aesthetic.
+
+## User Review Required
+None specifically, but visual changes are significant.
+
+## Proposed Changes
+### Global Styles ([app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css))
+- [ ] **Update Color Palette**:
+    - `hakurei-red`: Adjust to a deeper, Torii-like red (keep or slightly darken).
+    - `hakurei-white`: Change to a snowy off-white (`#F8F9FA`).
+    - Add `winter-navy`: `#2F3E46` (for text or accents).
+    - Add `pine-green`: `#2D4F3F` (nature accent).
+    - Add `warm-gold`: `#E6C229` (festive accent).
+
+### Hero Component ([components/Hero.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Hero.js))
+- [ ] **Update Background**:
+    - Replace the CSS gradient with the uploaded image (`/hero-winter.jpg`).
+    - Add an overlay (gradient or semi-transparent color) to ensure text readability.
+- [ ] **Update Text Style**:
+    - Adjust text color to stand out against the image (likely White with Shadow).
+    - Maintain the vertical Japanese text but ensure it fits the new layout (maybe move to the side if the image center is important).
+- [ ] **Update Examples**:
+    - Change particle effects from "Sakura" (Pink) to "Snow" (White).
+
+### Refinement Steps
+- [components/Hero.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Hero.js):
+    - [ ] Change subtitle "Winter Edition" to "Hifuu Kou" (or "Hifuu Kou Club").
+- [components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js):
+    - [ ] Ensure background is transparent or matches winter palette.
+    - [ ] Update text colors for readability over winter backgrounds.
+- [components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js):
+    - [ ] Update main background to winter gradient/color.
+    - [ ] Adjust circle background colors (Renko/Merry) to cool winter tones.
+- [components/VideoSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/VideoSection.js):
+    - [ ] Update background to matching winter style.
+    - [ ] Update header border color to Deep Red or Slate.
+    - [ ] Add subtle shadow/border to video cards.
+
+## Verification Plan
+### Manual Verification
+- View the top page to ensure the hero image loads correctly.
+- Check text readability on the new background.
+- Verify the "snow" animation works and looks like snow.
+- Check various screen sizes (Mobile/Desktop).

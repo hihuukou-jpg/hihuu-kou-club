@@ -1,0 +1,23 @@
+# Character Image Upload & Display Fix Walkthrough
+
+This document summarizes the changes made to fix the character image upload functionality and ensuring images display correctly on both the admin dashboard and the public main page.
+
+## Changes Made
+
+### 1. Admin Panel ([app/admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js))
+- **Bug Fix**: The character list and edit form were incorrectly referencing `c.image` and `char.image`.
+- **Change**: Updated all references to `c.image_url` and `char.image_url` to match the database schema.
+
+### 2. Public Page ([components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js))
+- **Bug Fix**: The public character display was also referencing the old `image` property.
+- **Change**: Updated references in the avatar list and main character display to `image_url`.
+
+### 3. API Route ([app/api/upload/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/upload/route.js))
+- **Enhancement**: Uploads were failing due to Row Level Security (RLS) policies when using the standard public client.
+- **Change**: Switched to using `supabaseAdmin` (service role key) for file uploads to bypass RLS restrictions, ensuring administrators can successfully upload images.
+
+## Verification Results
+- **User Verified**: The user confirmed that they can now upload images and they are correctly displayed on the site ("出来たーー！").
+
+## Next Steps
+- No further action required for this issue.

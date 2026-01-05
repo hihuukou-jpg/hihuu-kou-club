@@ -1,0 +1,33 @@
+# Project Progress Walkthrough
+
+## Completed Tasks
+
+### 1. Fix Character Image Upload & Display
+- **Issue**: Admin uploads failed, and images didn't appear on public pages.
+- **Solution**:
+    - Fixed property name mismatch (`image` -> `image_url`) in [app/admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js) and [components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js).
+    - Switched to `supabaseAdmin` for API uploads to bypass RLS restrictions.
+- **Result**: Uploads work, and images display correctly across the site.
+
+### 2. Winter Theme Redesign
+- **Goal**: Apply a winter/New Year aesthetic based on user-provided illustration.
+- **Changes**:
+    - **Hero Background**: Implemented the provided winter illustration.
+    - **Animations**: Changed sakura petals to falling snow.
+    - **Color Palette**: Updated [globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css) with Winter Shrine colors (Deep Red #B91C1C, Snow White #F8FAFC).
+    - **Refinements**:
+        - Changed Hero subtitle to "Hifuu Kou".
+        - Updated Navigation bar with a frosty glass effect.
+        - **Characters & Content**: Updated section backgrounds to winter gradients (`#F8FAFC -> #E0F2FE`) and adopted cool slate tones for element accents.
+- **Result**: The site now fully reflects a cohesive "Winter Edition" theme with consistent styling across all sections.
+
+### 3. Local Server Troubleshooting
+- **Issue**: `npm run dev` failed to start because port 3000 was locked by a zombie process.
+- **Solution**:
+    - Terminated the blocking process (PID 44796).
+    - Removed the stale `.next/dev/lock` file.
+    - Restarted the server successfully.
+- **Result**: Local development server is running at `http://localhost:3000`.
+
+## Current Status
+The website is fully functional locally with the completed winter redesign covering all major sections.

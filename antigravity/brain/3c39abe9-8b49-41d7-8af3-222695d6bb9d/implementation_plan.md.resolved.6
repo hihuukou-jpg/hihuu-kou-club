@@ -1,0 +1,32 @@
+# HSR-Style Redesign Plan (Winter Edition)
+
+## Design Philosophy
+Merge the "Winter Shrine" atmosphere with "Honkai: Star Rail" UI aesthetics.
+- **Colors**: Keep Winter White/Ice Blue/Deep Red. Add **Silver/Pale Gold** for borders and **Cyan** for active states/glows to match HSR's tech feel.
+- **shapes**: Use **Cut Corners** (45-degree angles) and **Diamond** accents.
+- **Effects**: **Glassmorphism** (frosted glass) for all containers. **Parallax** if possible.
+
+## Proposed Changes
+### Global Styles ([app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css))
+- [ ] Add `.hsr-card` class: Glass background + Cut corners (`clip-path`).
+- [ ] Add `.hsr-button` class: Sharp angles, metallic gradient.
+- [ ] Add `.hsr-border`: Thin, elegant border styles.
+
+### Components
+- **[components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)**:
+    - [ ] HSR Style: Transparent top bar, becoming dark/glass on scroll.
+    - [ ] Active State: Glowing underline (Cyan or Gold).
+    - [ ] Font: Clean Sans-serif for menu, keeping Serif for Logo.
+- **[components/NewsSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/NewsSection.js) / [components/DiarySection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/DiarySection.js)**:
+    - [ ] Cards: Switch to "Cut Corner" glass cards with thin borders.
+    - [ ] Headers: Add geometric accents (diamonds/lines) next to titles.
+- **[components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js)**:
+    - [ ] Refine Selector: Modern "Tab" style or "Diamond" buttons.
+    - [ ] Details Box: HSR-style "Info Panel" (frosted glass, tech lines).
+- **[components/VideoSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/VideoSection.js)**:
+    - [ ] Video Frames: Add "Tech" borders (corners highlighted).
+
+## Verification Plan
+### Manual Verification
+- Check "HSR Look & Feel": Does it look like a sci-fi winter shrine?
+- Verify responsiveness of new specific shapes.

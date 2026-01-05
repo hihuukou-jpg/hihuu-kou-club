@@ -24,7 +24,7 @@ export default function VideoSection() {
     return (
         <section id="videos" style={{
             position: 'relative',
-            background: '#fff',
+            background: '#F8FAFC',
             color: '#333',
             padding: '8rem 2rem',
             fontFamily: 'var(--font-serif)'
@@ -34,14 +34,14 @@ export default function VideoSection() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
+                    className="hsr-title-decor"
                     style={{
                         fontSize: '2.5rem',
-                        borderBottom: '4px solid #333',
-                        paddingBottom: '0.5rem',
                         marginBottom: '3rem',
                         letterSpacing: '0.05em',
                         fontFamily: 'var(--font-display)',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        color: 'var(--text-main)',
                     }}
                 >
                     CONTENT
@@ -56,20 +56,27 @@ export default function VideoSection() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: index * 0.1, duration: 0.5 }}
+                                className="hsr-glass"
                                 style={{
-                                    background: '#f8f8f8',
-                                    border: '1px solid #ddd',
-                                    padding: '1rem',
-                                    boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+                                    padding: '0.5rem',
+                                    border: '1px solid rgba(0,0,0,0.1)',
+                                    background: '#fff',
+                                    position: 'relative',
+                                    clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)',
                                 }}
                             >
+                                {/* Decorative Corner Accents */}
+                                <div style={{ position: 'absolute', top: 0, left: 0, width: '10px', height: '10px', borderTop: '2px solid var(--hsr-gold)', borderLeft: '2px solid var(--hsr-gold)' }}></div>
+                                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '10px', height: '10px', borderBottom: '2px solid var(--hsr-gold)', borderRight: '2px solid var(--hsr-gold)' }}></div>
+
                                 <div style={{
                                     position: 'relative',
-                                    paddingBottom: '56.25%', /* 16:9 Aspect Ratio */
+                                    paddingBottom: '56.25%',
                                     height: 0,
                                     overflow: 'hidden',
                                     marginBottom: '1rem',
-                                    background: '#000'
+                                    background: '#000',
+                                    clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)',
                                 }}>
                                     {videoId ? (
                                         <iframe
@@ -86,7 +93,7 @@ export default function VideoSection() {
                                         </div>
                                     )}
                                 </div>
-                                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', margin: '0 0 0.5rem 0' }}>{video.title}</h3>
+                                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', margin: '0 0.5rem 0.5rem 0.5rem', fontFamily: 'var(--font-sans)' }}>{video.title}</h3>
                             </motion.div>
                         );
                     })}

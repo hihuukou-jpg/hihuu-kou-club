@@ -1,31 +1,56 @@
-# Character Image Upload Fix Implementation Plan
+# HSR-Style Redesign Plan (Winter Edition)
 
-## Goal Description
-Fix the issue where character standing pictures (t立ち絵) cannot be uploaded in the admin panel's character management section.
-
-## User Review Required
-None identified yet.
+## Design Philosophy
+Merge the "Winter Shrine" atmosphere with "Honkai: Star Rail" UI aesthetics.
+- **Colors**: Keep Winter White/Ice Blue/Deep Red. Add **Silver/Pale Gold** for borders and **Cyan** for active states/glows to match HSR's tech feel.
+- **shapes**: Use **Cut Corners** (45-degree angles) and **Diamond** accents.
+- **Effects**: **Glassmorphism** (frosted glass) for all containers. **Parallax** if possible.
 
 ## Proposed Changes
-## Proposed Changes
-### Admin Panel
-- `app/admin/page.js`:
-    - [x] **Fix Bug**: Change `c.image` to `c.image_url` in the character list mapping.
-    - [x] **Fix Bug**: Change `char.image` to `char.image_url` in `handleEditChar`.
+### Global Styles (`app/globals.css`)
+- [ ] Add `.hsr-card` class: Glass background + Cut corners (`clip-path`).
+- [ ] Add `.hsr-button` class: Sharp angles, metallic gradient.
+- [ ] Add `.hsr-border`: Thin, elegant border styles.
 
-### Public Site
+### Components
+- **`components/Navigation.js`**:
+    - [ ] HSR Style: Transparent top bar, becoming dark/glass on scroll.
+    - [ ] Active State: Glowing underline (Cyan or Gold).
+    - [ ] Font: Clean Sans-serif for menu, keeping Serif for Logo.
+- **`components/NewsSection.js` / `components/DiarySection.js`**:
+    - [ ] Cards: Switch to "Cut Corner" glass cards with thin borders.
+    - [ ] Headers: Add geometric accents (diamonds/lines) next to titles.
+- **`components/CharacterSection.js`**:
+    - [ ] Refine Selector: Modern "Tab" style or "Diamond" buttons.
+    - [ ] Details Box: HSR-style "Info Panel" (frosted glass, tech lines).
+- **`components/VideoSection.js`**:
+    - [ ] Video Frames: Add "Tech" borders (corners highlighted).
+
+### Refinement Steps
+- `components/Hero.js`:
+    - [x] Change subtitle "Winter Edition" to "Hifuu Kou" (or "Hifuu Kou Club").
+- `components/Navigation.js`:
+    - [x] Ensure background is transparent or matches winter palette.
+    - [x] Update text colors for readability over winter backgrounds.
 - `components/CharacterSection.js`:
-    - [ ] **Fix Bug**: Change `char.image` to `char.image_url` in the avatar list.
-    - [ ] **Fix Bug**: Change `selectedChar.image` to `selectedChar.image_url` in the main display.
+    - [x] Update main background to winter gradient/color.
+    - [x] Adjust circle background colors (Renko/Merry) to cool winter tones.
+- `components/VideoSection.js`:
+    - [x] Update background to matching winter style.
+    - [x] Update header border color to Deep Red or Slate.
+    - [x] Add subtle shadow/border to video cards.
 
-### API Routes
-- `app/api/upload/route.js`:
-    - [x] **Fix Upload Logic**: Import and use `supabaseAdmin` instead of `supabase` to bypass RLS, ensuring uploads work for authenticated admins.
-    - [x] Add fallback: If `supabaseAdmin` is null (missing env var), log error or try standard `supabase` (though likely to fail if RLS is strict).
-- `app/api/characters/route.js`:
-    - [ ] No changes needed if data structure remains `image_url`.
+### Visitor Counter (New)
+- `supabase_stats.sql`:
+    - [x] Create SQL schema for `site_stats`.
+- `app/api/stats/route.js`:
+    - [x] Create API endpoint.
+- `components/Navigation.js`:
+    - [x] Add tracking logic.
+- `app/admin/page.js`:
+    - [x] Add display logic.
 
 ## Verification Plan
 ### Manual Verification
-- Attempt to upload an image for a new and existing character via the admin panel.
-- Verify the image appears in the list and on the public site (if applicable).
+- Check "HSR Look & Feel": Does it look like a sci-fi winter shrine?
+- Verify responsiveness of new specific shapes.

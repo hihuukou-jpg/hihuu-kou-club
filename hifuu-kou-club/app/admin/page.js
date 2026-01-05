@@ -12,6 +12,7 @@ export default function AdminPage() {
     const [chars, setChars] = useState([]);
     const [diary, setDiary] = useState([]);
     const [videos, setVideos] = useState([]);
+    const [stats, setStats] = useState({ views: 0 });
 
     // News Form
     const [newsTitle, setNewsTitle] = useState("");
@@ -47,6 +48,15 @@ export default function AdminPage() {
         const c = await fetch("/api/characters").then(res => res.json());
         const d = await fetch("/api/diary").then(res => res.json());
         const v = await fetch("/api/videos").then(res => res.json());
+
+        // Only fetch stats if logged in (or just fetch and hide if not, but purely safe is conditional)
+        // For simplicity, fetch always, hide in UI. 
+        // Or catch error nicely.
+        try {
+            const s = await fetch("/api/stats").then(res => res.json());
+            setStats(s);
+        } catch (e) { console.error(e); }
+
         setNews(n);
         setChars(c);
         setDiary(d);
@@ -214,6 +224,17 @@ export default function AdminPage() {
                 <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
                     {session ? (
                         <>
+                            <div style={{
+                                padding: "0.5rem 1rem",
+                                background: "#E0F2FE",
+                                color: "#0F172A",
+                                borderRadius: "4px",
+                                border: "1px solid #BAE6FD",
+                                fontSize: "0.9rem",
+                                fontWeight: "bold"
+                            }}>
+                                訪問者数: {stats.views}人
+                            </div>
                             <span>Login: {session.user.name}</span>
                             <button onClick={() => signOut()} style={{ padding: "0.5rem 1rem", border: "1px solid #ccc", background: "white", cursor: "pointer" }}>ログアウト</button>
                         </>
