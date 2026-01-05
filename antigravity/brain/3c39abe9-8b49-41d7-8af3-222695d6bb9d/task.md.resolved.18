@@ -1,0 +1,32 @@
+# Admin Character Upload Fix
+
+- [x] Investigate current implementation <!-- id: 0 -->
+    - [x] Analyze [app/admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js) for character upload logic
+    - [x] Analyze API routes for character handling
+- [x] Fix Character Image Upload (Admin) <!-- id: 1 -->
+    - [x] Implement/Fix frontend upload logic
+    - [x] Implement/Fix backend upload logic
+- [x] Fix Public Page Character Display <!-- id: 3 -->
+    - [x] Update [components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js) property access
+- [x] Redesign Website for Winter Theme <!-- id: 4 -->
+    - [x] Update [app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css) colors
+    - [x] Update [components/Hero.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Hero.js) with refined text and image
+- [x] HSR Style Redesign (Winter Edition) <!-- id: 6 -->
+    - [x] Update [app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css) with HSR utility classes
+    - [x] Redesign [components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+    - [x] Redesign [components/NewsSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/NewsSection.js) & [DiarySection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/DiarySection.js)
+    - [x] Redesign [components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js)
+- [x] Implement Visitor Counter <!-- id: 7 -->
+    - [x] Create SQL schema [supabase_stats.sql](file:///c:/Users/kouki/.gemini/hifuu-kou-club/supabase_stats.sql)
+    - [x] Create API route `/api/stats`
+    - [x] Add tracking to [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+- [x] Implement Visitor Counter <!-- id: 7 -->
+    - [x] Create SQL schema [supabase_stats.sql](file:///c:/Users/kouki/.gemini/hifuu-kou-club/supabase_stats.sql)
+    - [x] Create API route `/api/stats`
+    - [x] Add tracking to [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+    - [x] Add display to [admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js)
+- [x] Implement UX & SEO Improvements <!-- id: 9 -->
+    - [x] Create [app/loading.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/loading.js) (HSR Spinner)
+    - [x] Create [app/not-found.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/not-found.js) (Sci-fi 404)
+    - [x] Configure OGP Metadata in [app/layout.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/layout.js)
+    - [x] Polish Mobile Layout in [app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css)

@@ -20,4 +20,13 @@
     - [x] Create SQL schema [supabase_stats.sql](file:///c:/Users/kouki/.gemini/hifuu-kou-club/supabase_stats.sql)
     - [x] Create API route `/api/stats`
     - [x] Add tracking to [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
+- [x] Implement Visitor Counter <!-- id: 7 -->
+    - [x] Create SQL schema [supabase_stats.sql](file:///c:/Users/kouki/.gemini/hifuu-kou-club/supabase_stats.sql)
+    - [x] Create API route `/api/stats`
+    - [x] Add tracking to [Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)
     - [x] Add display to [admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js)
+- [x] Implement UX & SEO Improvements <!-- id: 9 -->
+    - [x] Create [app/loading.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/loading.js) (HSR Spinner)
+    - [x] Create [app/not-found.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/not-found.js) (Sci-fi 404)
+    - [x] Configure OGP Metadata in [app/layout.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/layout.js)
+    - [x] Polish Mobile Layout in [app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css)

@@ -1,0 +1,27 @@
+# UX & SEO Improvements Plan
+
+## Goals
+Implement advanced UX features and SEO optimizations to polish the website for release.
+
+## Proposed Changes
+### 1. Loading Screen (`app/loading.js`)
+- **Design**: HSR-style rotating geometric rings or "System Initializing" text.
+- **Tech**: Create `loading.js` which Next.js automatically uses during route transitions.
+
+### 2. Custom 404 Page (`app/not-found.js`)
+- **Design**: "Connection Lost" / "Coordinates Invalid" sci-fi theme.
+- **Content**: Message and "Return to Home" button.
+
+### 3. OGP / SEO Setup ([app/layout.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/layout.js))
+- **Metadata**: Add `openGraph` and `twitter` card configurations.
+- **Image**: Utilize existing hero image or logo for the preview image.
+
+### 4. Mobile Polish ([app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css))
+- **Touch Targets**: Ensure buttons have enough padding.
+- **Spacing**: Verify margins on mobile view.
+
+## Verification Plan
+- **Loading**: Navigate between pages (or simulate delay) to see the loader.
+- **404**: Visit a random URL (e.g., `/random123`) to see the custom error page.
+- **OGP**: Use a meta tag checker tool or inspect the `<head>` in the browser.
+- **Mobile**: Use browser devtools mobile emulation to check tap sizes.

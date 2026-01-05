@@ -20,4 +20,13 @@
     - [x] Create SQL schema `supabase_stats.sql`
     - [x] Create API route `/api/stats`
     - [x] Add tracking to `Navigation.js`
+- [x] Implement Visitor Counter <!-- id: 7 -->
+    - [x] Create SQL schema `supabase_stats.sql`
+    - [x] Create API route `/api/stats`
+    - [x] Add tracking to `Navigation.js`
     - [x] Add display to `admin/page.js`
+- [x] Implement UX & SEO Improvements <!-- id: 9 -->
+    - [x] Create `app/loading.js` (HSR Spinner)
+    - [x] Create `app/not-found.js` (Sci-fi 404)
+    - [x] Configure OGP Metadata in `app/layout.js`
+    - [x] Polish Mobile Layout in `app/globals.css`

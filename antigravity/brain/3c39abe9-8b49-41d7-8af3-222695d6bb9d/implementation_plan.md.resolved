@@ -1,56 +1,27 @@
-# HSR-Style Redesign Plan (Winter Edition)
+# UX & SEO Improvements Plan
 
-## Design Philosophy
-Merge the "Winter Shrine" atmosphere with "Honkai: Star Rail" UI aesthetics.
-- **Colors**: Keep Winter White/Ice Blue/Deep Red. Add **Silver/Pale Gold** for borders and **Cyan** for active states/glows to match HSR's tech feel.
-- **shapes**: Use **Cut Corners** (45-degree angles) and **Diamond** accents.
-- **Effects**: **Glassmorphism** (frosted glass) for all containers. **Parallax** if possible.
+## Goals
+Implement advanced UX features and SEO optimizations to polish the website for release.
 
 ## Proposed Changes
-### Global Styles ([app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css))
-- [ ] Add `.hsr-card` class: Glass background + Cut corners (`clip-path`).
-- [ ] Add `.hsr-button` class: Sharp angles, metallic gradient.
-- [ ] Add `.hsr-border`: Thin, elegant border styles.
+### 1. Loading Screen (`app/loading.js`)
+- **Design**: HSR-style rotating geometric rings or "System Initializing" text.
+- **Tech**: Create `loading.js` which Next.js automatically uses during route transitions.
 
-### Components
-- **[components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js)**:
-    - [ ] HSR Style: Transparent top bar, becoming dark/glass on scroll.
-    - [ ] Active State: Glowing underline (Cyan or Gold).
-    - [ ] Font: Clean Sans-serif for menu, keeping Serif for Logo.
-- **[components/NewsSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/NewsSection.js) / [components/DiarySection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/DiarySection.js)**:
-    - [ ] Cards: Switch to "Cut Corner" glass cards with thin borders.
-    - [ ] Headers: Add geometric accents (diamonds/lines) next to titles.
-- **[components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js)**:
-    - [ ] Refine Selector: Modern "Tab" style or "Diamond" buttons.
-    - [ ] Details Box: HSR-style "Info Panel" (frosted glass, tech lines).
-- **[components/VideoSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/VideoSection.js)**:
-    - [ ] Video Frames: Add "Tech" borders (corners highlighted).
+### 2. Custom 404 Page (`app/not-found.js`)
+- **Design**: "Connection Lost" / "Coordinates Invalid" sci-fi theme.
+- **Content**: Message and "Return to Home" button.
 
-### Refinement Steps
-- [components/Hero.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Hero.js):
-    - [x] Change subtitle "Winter Edition" to "Hifuu Kou" (or "Hifuu Kou Club").
-- [components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js):
-    - [x] Ensure background is transparent or matches winter palette.
-    - [x] Update text colors for readability over winter backgrounds.
-- [components/CharacterSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js):
-    - [x] Update main background to winter gradient/color.
-    - [x] Adjust circle background colors (Renko/Merry) to cool winter tones.
-- [components/VideoSection.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/VideoSection.js):
-    - [x] Update background to matching winter style.
-    - [x] Update header border color to Deep Red or Slate.
-    - [x] Add subtle shadow/border to video cards.
+### 3. OGP / SEO Setup ([app/layout.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/layout.js))
+- **Metadata**: Add `openGraph` and `twitter` card configurations.
+- **Image**: Utilize existing hero image or logo for the preview image.
 
-### Visitor Counter (New)
-- [supabase_stats.sql](file:///c:/Users/kouki/.gemini/hifuu-kou-club/supabase_stats.sql):
-    - [x] Create SQL schema for `site_stats`.
-- [app/api/stats/route.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/api/stats/route.js):
-    - [x] Create API endpoint.
-- [components/Navigation.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/components/Navigation.js):
-    - [x] Add tracking logic.
-- [app/admin/page.js](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js):
-    - [x] Add display logic.
+### 4. Mobile Polish ([app/globals.css](file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/globals.css))
+- **Touch Targets**: Ensure buttons have enough padding.
+- **Spacing**: Verify margins on mobile view.
 
 ## Verification Plan
-### Manual Verification
-- Check "HSR Look & Feel": Does it look like a sci-fi winter shrine?
-- Verify responsiveness of new specific shapes.
+- **Loading**: Navigate between pages (or simulate delay) to see the loader.
+- **404**: Visit a random URL (e.g., `/random123`) to see the custom error page.
+- **OGP**: Use a meta tag checker tool or inspect the `<head>` in the browser.
+- **Mobile**: Use browser devtools mobile emulation to check tap sizes.
