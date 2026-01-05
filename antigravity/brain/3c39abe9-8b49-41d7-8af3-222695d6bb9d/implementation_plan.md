@@ -10,13 +10,18 @@ None identified yet.
 ## Proposed Changes
 ### Admin Panel
 - `app/admin/page.js`:
-    - [ ] **Fix Bug**: Change `c.image` to `c.image_url` in the character list mapping.
-    - [ ] **Fix Bug**: Change `char.image` to `char.image_url` in `handleEditChar`.
+    - [x] **Fix Bug**: Change `c.image` to `c.image_url` in the character list mapping.
+    - [x] **Fix Bug**: Change `char.image` to `char.image_url` in `handleEditChar`.
+
+### Public Site
+- `components/CharacterSection.js`:
+    - [ ] **Fix Bug**: Change `char.image` to `char.image_url` in the avatar list.
+    - [ ] **Fix Bug**: Change `selectedChar.image` to `selectedChar.image_url` in the main display.
 
 ### API Routes
 - `app/api/upload/route.js`:
-    - [ ] **Fix Upload Logic**: Import and use `supabaseAdmin` instead of `supabase` to bypass RLS, ensuring uploads work for authenticated admins.
-    - [ ] Add fallback: If `supabaseAdmin` is null (missing env var), log error or try standard `supabase` (though likely to fail if RLS is strict).
+    - [x] **Fix Upload Logic**: Import and use `supabaseAdmin` instead of `supabase` to bypass RLS, ensuring uploads work for authenticated admins.
+    - [x] Add fallback: If `supabaseAdmin` is null (missing env var), log error or try standard `supabase` (though likely to fail if RLS is strict).
 - `app/api/characters/route.js`:
     - [ ] No changes needed if data structure remains `image_url`.
 
