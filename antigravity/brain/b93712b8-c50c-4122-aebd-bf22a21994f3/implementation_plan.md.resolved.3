@@ -1,0 +1,32 @@
+# Refinements & Entrance Animation Plan
+
+## Goal
+Improve usability of BGM and Omikuji, and add a dramatic "Fusuma" (sliding door) entrance animation with sound to the landing page.
+
+## Proposed Changes
+
+### 1. BGM Player Refinement ([components/BgmPlayer.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/BgmPlayer.js))
+- **Volume Control**: Add a vertical or horizontal slider (`<input type="range">`) to adjust volume from 0 to 1.
+- **UI**: Show slider on hover or toggle.
+
+### 2. Omikuji Refinement ([components/Omikuji.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/Omikuji.js))
+- **Dismissible**: Add a "Close" (X) button to the result display so users can hide it after reading.
+
+### 3. Fusuma Entrance (`components/FusumaGate.js`)
+- **Visuals**:
+    - Two large panels (Left/Right) covering 100vw/100vh.
+    - Texture: Japanese paper (Washi) + Wood frame styling.
+    - Center handle (Hikite).
+- **Animation**:
+    - On mount: Slide `x: 0` to `x: -100%` (left) and `x: 100%` (right).
+    - Duration: ~1.5s - 2s easing.
+- **Sound**:
+    - Play a "Sliding Door" sound effect (`fusuma_open.mp3` placeholder) immediately on load.
+    - We will try to autoplay; if blocked, it plays as soon as possible.
+- **Integration**:
+    - Add to [app/page.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/app/page.js) as the top-level component.
+
+## Verification Plan
+1.  **BGM**: Slide volume, check if audio level changes.
+2.  **Omikuji**: Draw fortune, click X, verify it disappears.
+3.  **Fusuma**: Reload page -> See doors -> Hear sound -> Doors open -> Revealing Hero section.

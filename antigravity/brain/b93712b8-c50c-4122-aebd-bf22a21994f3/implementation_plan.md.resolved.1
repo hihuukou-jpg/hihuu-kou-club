@@ -1,0 +1,35 @@
+# Enhancement Plan: Character Section (Hakurei Shrine Theme)
+
+## Goal
+Redesign the Character Section to align with a "Cute Hakurei Shrine" atmosphere, moving away from the current dark cyber/tech aesthetic. The new design will emphasize traditional Japanese elements, shrine colors (Red/White), and a softer, more welcoming presentation.
+
+## User Review Required
+> [!NOTE]
+> I will change the entire background of this section to be brighter (Japanese paper texture/White) to contrast with the dark "Hero" section, creating a dynamic visual rhythm.
+
+## Proposed Changes
+
+### Components
+
+#### [MODIFY] [components/CharacterSection.js](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/CharacterSection.js)
+- **Background**: Change from dark blue/tech to a "Washi" (Japanese paper) texture with subtle Sakura (cherry blossom) patterns.
+- **Layout**:
+    - **Mobile**: Swipeable card view.
+    - **Desktop**:
+        - Left: Vertical list of "Ema" (wooden plaques) serving as character tabs.
+        - Right: Large character illustration with a "Scroll" (Makimono) style description box.
+- **Visual Elements**:
+    - Remove rotating tech rings.
+    - Add floating Sakura petal animations.
+    - Change fonts to predominantly Serif / Mincho for a traditional feel.
+    - Use "Hakurei Red" (`#B91C1C` / `var(--hakurei-red)`) and "Shinto White" for the color palette.
+
+#### [NEW] `components/SakuraBackground.js` (Optional/Inline)
+- A lightweight compiled CSS animation for falling cherry blossom petals to add interactivity and "cuteness".
+
+## Verification Plan
+
+### Manual Verification
+- **Theme**: Verify the visual shift from "Cool/Tech" to "Cute/Traditional".
+- **Responsive**: Ensure the "Ema" tab list transitions smoothly to a mobile-friendly layout.
+- **Animations**: Check that sakura petals fall smoothly without causing lag.

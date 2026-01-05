@@ -10,3 +10,37 @@
 - [x] Create VideoModal component <!-- id: 6 -->
 - [x] Refactor VideoSection to use thumbnails and modal <!-- id: 7 -->
 - [x] Verify functionality (thumbnails, modal, responsive) <!-- id: 8 -->
+
+# Enhance Character Section <!-- id: 9 -->
+- [x] Create Implementation Plan (Hakurei Shrine Theme) <!-- id: 10 -->
+- [x] Implement new CharacterCard design (Ema/Ofuda style) <!-- id: 11 -->
+- [x] Update CharacterSection layout <!-- id: 12 -->
+- [x] Verify design and responsiveness <!-- id: 13 -->
+
+# Refine Character Section <!-- id: 14 -->
+- [x] Reduce image size and soften corners <!-- id: 15 -->
+- [x] Verify refinement <!-- id: 16 -->
+- [x] Adjust image responsive scaling <!-- id: 17 -->
+
+# Interactive Features (Ema, Omikuji, BGM) <!-- id: 18 -->
+- [x] Create Implementation Plan <!-- id: 19 -->
+- [x] Implement Ema (Comment) Feature <!-- id: 20 -->
+    - [x] Create `ema_messages` table (using SQL)
+    - [x] Create API route for Ema
+    - [x] Create Frontend Component (EmaBoard)
+- [x] Implement Omikuji Feature <!-- id: 21 -->
+- [x] Implement BGM Player <!-- id: 22 -->
+- [/] Verify all new features <!-- id: 23 -->
+
+# Refine Interactions & Entrance <!-- id: 24 -->
+- [x] BGM Player: Add volume slider <!-- id: 25 -->
+- [x] Omikuji: Add close button <!-- id: 26 -->
+- [x] Implement Fusuma (Sliding Door) Entrance <!-- id: 27 -->
+    - [x] Create `FusumaGate` component
+    - [x] Add sound effect
+    - [x] Integrate into `page.js`
+- [x] Verify all new features <!-- id: 28 -->
+
+# Realism Enhancements <!-- id: 29 -->
+- [x] Enhance Fusuma Visuals (Texture, Lighting, Handles) <!-- id: 30 -->
+- [x] Update BGM: User's File `bgm.mp3` (Volume 0.05) <!-- id: 31 -->

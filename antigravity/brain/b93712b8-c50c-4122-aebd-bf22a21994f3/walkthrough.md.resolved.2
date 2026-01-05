@@ -1,0 +1,26 @@
+# Refinement: Character Section (Design Polish)
+
+## Changes Implemented
+
+### 1. Reverted Image Size & Layout
+- **Restoration**: Returned the character image to the previous larger size (`height: 100%`) as per user feedback ("previous size was good").
+
+### 2. Design Improvements ("Better Design")
+- **Soft Float Animation**: Added a gentle up-and-down floating animation to the character image to make it feel alive and less static.
+- **Bottom Fade Mask**: Applied a `mask-image` gradient to fade out the bottom 15% of the character image. This solves the "angular/cut-off" issue where the image meets the floor.
+- **Paper Glow Effect**: Added a subtle white glow + drop shadow filter to give a "high-quality paper cutout" feel, enhancing the "Hakurei Shrine/Washi" theme.
+
+## Verification Results
+
+### Automated Checks
+- [x] **Server Start**: Next.js server running on port 3000.
+- [x] **API Health**: `/api/characters` returning data correctly.
+
+### User Verification Required
+Please open the website and inspect the "CHARACTERS" (登場人物) section:
+1.  **Size**: Is the character image big enough again?
+2.  **Animation**: Do you see the gentle floating motion?
+3.  **Edges**: Does the bottom of the image fade out smoothly instead of a hard cut?
+
+## Screenshots
+*(Please view the live site to see the animations)*

@@ -1,0 +1,25 @@
+# Refinement: Character Section (Responsive Sizing)
+
+## Changes Implemented
+
+### 1. Responsive Image Constraints
+- **Issue**: User reported the character image looked too large when the window size was reduced.
+- **Solution**: Added dynamic constraints based on the viewport size.
+    - **Max Height**: Limited to `65vh` (65% of window height) on desktop. This ensures the image shrinks if the window height is reduced.
+    - **Max Width**: Limited to `35vw` (35% of window width) on desktop. This prevents the image from dominating the layout on narrow desktop windows.
+    - **Mobile**: Preserved `max-width: 100%` for mobile layouts where vertical stacking is used.
+
+### 2. Design Consistency
+- Maintained the "Soft Float" animation and "Bottom Fade" mask from the previous iteration.
+- Kept the "Paper Glow" effect.
+
+## Verification Results
+
+### Automated Checks
+- [x] **Server Start**: Next.js server running on port 3000.
+- [x] **API Health**: `/api/characters` returning data correctly.
+
+### User Verification Required
+Please try resizing your browser window:
+1.  **Height**: Shrink the window vertically. Does the character image shrink to fit?
+2.  **Width**: Shrink the window horizontally. Does the character image scale down appropriately?

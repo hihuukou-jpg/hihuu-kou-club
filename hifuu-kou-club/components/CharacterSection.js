@@ -3,13 +3,44 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+// Sakura Petal Component
+const SakuraPetal = ({ delay }) => (
+    <motion.div
+        initial={{ y: -20, x: Math.random() * 100 - 50, opacity: 0, rotate: 0 }}
+        animate={{
+            y: ['0vh', '100vh'],
+            x: [0, Math.random() * 100 - 50, 0],
+            opacity: [0, 1, 0],
+            rotate: [0, 360],
+        }}
+        transition={{
+            duration: 10 + Math.random() * 5,
+            delay: delay,
+            repeat: Infinity,
+            ease: "linear"
+        }}
+        style={{
+            position: 'absolute',
+            top: -20,
+            left: `${Math.random() * 100}%`,
+            width: '16px',
+            height: '16px',
+            background: '#FECACA', // Sakura Pink
+            borderRadius: '100% 0 100% 0',
+            opacity: 0.6,
+            zIndex: 0,
+            pointerEvents: 'none'
+        }}
+    />
+);
+
 export default function CharacterSection() {
     const [data, setData] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        const handleResize = () => setIsMobile(window.innerWidth < 1024); // Mobile breakpoint increased for list view
         handleResize();
         window.addEventListener('resize', handleResize);
 
@@ -31,221 +62,270 @@ export default function CharacterSection() {
         <section id="characters" style={{
             position: 'relative',
             minHeight: '100vh',
-            background: 'linear-gradient(to top, #0f172a 0%, #1e293b 100%)', // Deep Space for HSR contrast
-            color: '#fff',
+            // Washi Paper Texture Simulation
+            background: 'var(--hakurei-white)',
+            backgroundImage: `
+                radial-gradient(#e5e7eb 1px, transparent 1px),
+                radial-gradient(#e5e7eb 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px',
+            backgroundPosition: '0 0, 10px 10px',
+            color: '#333',
             overflow: 'hidden',
             display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: isMobile ? '6rem 1rem' : '4rem 8rem',
+            fontFamily: 'var(--font-serif)'
         }}>
 
-            {/* Tech Particles/Grid Background */}
-            <div style={{ position: 'absolute', width: '100%', height: '100%', background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")', opacity: 0.5 }}></div>
+            {/* Sakura Particles */}
+            {[...Array(15)].map((_, i) => <SakuraPetal key={i} delay={i * 0.5} />)}
 
-            {/* Selector Sidebar */}
-            <div style={{
-                width: isMobile ? '100%' : '140px',
-                height: isMobile ? 'auto' : '100vh',
-                background: 'rgba(15, 23, 42, 0.6)',
-                backdropFilter: 'blur(10px)',
-                borderRight: isMobile ? 'none' : '1px solid rgba(255,255,255,0.1)',
-                borderBottom: isMobile ? '1px solid rgba(255,255,255,0.1)' : 'none',
-                zIndex: 10,
-                display: 'flex',
-                flexDirection: isMobile ? 'row' : 'column',
-                justifyContent: isMobile ? 'center' : 'center',
-                alignItems: 'center',
-                paddingTop: isMobile ? '1rem' : '0',
-                paddingBottom: isMobile ? '1rem' : '0',
-                gap: '2rem',
-                position: 'relative'
-            }}>
-                {data.map((char) => (
-                    <button
-                        key={char.id}
-                        onClick={() => setSelectedId(char.id)}
-                        style={{
-                            position: 'relative',
-                            width: '80px',
-                            height: '80px',
-                            background: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            transition: 'all 0.3s ease'
-                        }}
-                    >
-                        {/* Rotated Square Frame (Diamond) */}
-                        <div style={{
-                            width: '60px', height: '60px',
-                            transform: 'rotate(45deg)',
-                            border: selectedId === char.id ? '2px solid var(--hsr-gold)' : '1px solid rgba(255,255,255,0.3)',
-                            background: selectedId === char.id ? 'rgba(212, 175, 55, 0.1)' : 'transparent',
-                            boxShadow: selectedId === char.id ? '0 0 15px rgba(212, 175, 55, 0.3)' : 'none',
-                            overflow: 'hidden',
-                            position: 'relative',
-                            transition: 'all 0.3s ease'
-                        }}>
-                            <img
-                                src={char.image_url || 'https://placehold.co/100x100'}
-                                alt={char.name}
-                                style={{
-                                    width: '140%', height: '140%',
-                                    objectFit: 'cover',
-                                    transform: 'rotate(-45deg) translate(-15%, -15%)', // Counter-rotate image
-                                    filter: selectedId === char.id ? 'none' : 'grayscale(100%) brightness(0.7)'
-                                }}
-                            />
-                        </div>
-
-                        {/* Active Indicator Line */}
-                        {selectedId === char.id && !isMobile && (
-                            <motion.div
-                                layoutId="active-line"
-                                style={{ position: 'absolute', right: '-2px', top: '50%', transform: 'translateY(-50%)', width: '4px', height: '40px', background: 'var(--hsr-cyan)', boxShadow: '0 0 10px var(--hsr-cyan)' }}
-                            />
-                        )}
-                    </button>
-                ))}
+            {/* Title */}
+            <div style={{ textAlign: 'center', marginBottom: '3rem', zIndex: 2 }}>
+                <h2 className="hsr-title-decor" style={{
+                    fontSize: '2.5rem',
+                    color: 'var(--hakurei-red)',
+                    fontWeight: 'bold',
+                    textShadow: '2px 2px 0px rgba(0,0,0,0.1)',
+                    display: 'inline-block',
+                    background: '#fff',
+                    padding: '0.5rem 2rem',
+                    border: 'double 4px var(--hakurei-red)'
+                }}>
+                    登場人物
+                </h2>
+                <p style={{ marginTop: '0.5rem', color: '#666', fontSize: '0.9rem' }}>CHARACTERS</p>
             </div>
 
-            {/* Main Content Area */}
             <div style={{
-                flex: 1,
-                position: 'relative',
-                height: isMobile ? 'calc(100vh - 120px)' : '100%',
                 display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column'
+                flexDirection: isMobile ? 'column-reverse' : 'row',
+                gap: '2rem',
+                maxWidth: '1400px',
+                margin: '0 auto',
+                width: '100%',
+                height: isMobile ? 'auto' : '70vh',
+                zIndex: 2
             }}>
 
-                {/* Background Geometric Rings */}
-                <motion.div
-                    key={`ring-${selectedId}`}
-                    initial={{ rotate: 0, opacity: 0 }}
-                    animate={{ rotate: 360, opacity: 1 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    style={{
-                        position: 'absolute',
-                        width: isMobile ? '300px' : '600px',
-                        height: isMobile ? '300px' : '600px',
-                        border: '1px dashed rgba(255,255,255,0.1)',
-                        borderRadius: '50%',
-                        zIndex: 0,
-                        top: isMobile ? '5%' : 'auto'
-                    }}
-                />
-                <motion.div
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    style={{
-                        position: 'absolute',
-                        width: isMobile ? '250px' : '500px',
-                        height: isMobile ? '250px' : '500px',
-                        border: '1px solid rgba(255,255,255,0.05)',
-                        borderRadius: '50%',
-                        zIndex: 0,
-                        top: isMobile ? '8%' : 'auto'
-                    }}
-                />
-
-                {/* Character Illustration */}
+                {/* Left: Character Tabs (EMA Style) */}
                 <div style={{
-                    zIndex: 1,
-                    height: isMobile ? '55%' : '100%',
-                    width: '100%',
+                    width: isMobile ? '100%' : '300px',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    flexDirection: isMobile ? 'row' : 'column',
+                    gap: '1rem',
+                    overflowX: isMobile ? 'auto' : 'hidden',
+                    overflowY: isMobile ? 'hidden' : 'auto',
+                    padding: '1rem',
+                    scrollbarWidth: 'none'
                 }}>
-                    <AnimatePresence mode="wait">
-                        <motion.img
-                            key={selectedChar.image_url}
-                            src={selectedChar.image_url}
-                            alt={selectedChar.name}
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            transition={{ duration: 0.6, ease: "circOut" }}
+                    {data.map((char) => (
+                        <motion.button
+                            key={char.id}
+                            onClick={() => setSelectedId(char.id)}
+                            whileHover={{ scale: 1.05, x: isMobile ? 0 : 10 }}
+                            whileTap={{ scale: 0.95 }}
                             style={{
-                                height: '90%',
-                                maxHeight: isMobile ? '50vh' : '90vh',
-                                width: 'auto',
-                                maxWidth: '90%',
-                                objectFit: 'contain',
-                                filter: 'drop-shadow(0 0 20px rgba(0,0,0,0.5))'
-                            }}
-                        />
-                    </AnimatePresence>
-                </div>
-
-                {/* Description Box: Glass Panel */}
-                <div style={{
-                    position: isMobile ? 'relative' : 'absolute',
-                    bottom: isMobile ? 'auto' : '10%',
-                    right: isMobile ? 'auto' : '5%',
-                    width: isMobile ? '90%' : '400px',
-                    zIndex: 2,
-                    marginBottom: isMobile ? '2rem' : '0'
-                }}>
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={selectedId}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            transition={{ duration: 0.5 }}
-                            className="hsr-glass"
-                            style={{
-                                padding: '2rem',
-                                clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)', // Cut Corners
-                                borderLeft: '4px solid var(--hsr-gold)',
-                                background: 'rgba(15, 23, 42, 0.7)' // Overriding generic glass for darker look
+                                background: selectedId === char.id ? 'var(--hakurei-red)' : '#fff',
+                                color: selectedId === char.id ? '#fff' : '#333',
+                                border: '2px solid var(--hakurei-red)',
+                                borderRadius: '8px 8px 12px 12px', // Pseudo Ema shape
+                                padding: '1rem',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                                minWidth: isMobile ? '200px' : 'auto',
+                                position: 'relative',
+                                transition: 'all 0.3s ease'
                             }}
                         >
                             <div style={{
-                                fontFamily: 'var(--font-mono)',
-                                color: 'var(--hsr-cyan)',
-                                fontSize: '0.8rem',
-                                marginBottom: '0.5rem',
-                                letterSpacing: '0.1em'
+                                width: '50px',
+                                height: '50px',
+                                borderRadius: '50%',
+                                border: '2px solid #fff',
+                                overflow: 'hidden',
+                                flexShrink: 0,
+                                background: char.color || '#ccc'
                             }}>
-                                // {selectedChar.role}
+                                <img src={char.image_url || 'https://placehold.co/100x100'} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
-                            <h2 style={{
-                                fontFamily: 'var(--font-serif)',
-                                fontSize: '2.5rem',
-                                marginBottom: '1rem',
-                                fontWeight: 'bold',
-                                color: '#fff',
-                                textShadow: '0 0 10px rgba(255,255,255,0.3)'
-                            }}>
-                                {selectedChar.name}
-                            </h2>
-                            <div style={{ width: '50px', height: '2px', background: 'var(--hsr-gold)', marginBottom: '1rem' }}></div>
-                            <p style={{
-                                fontFamily: 'var(--font-serif)',
-                                lineHeight: '1.8',
-                                fontSize: '0.95rem',
-                                color: '#ddd'
-                            }}>
-                                {selectedChar.description}
-                            </p>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontSize: '0.8rem', opacity: 0.9 }}>{char.role}</div>
+                                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'var(--font-serif)' }}>{char.name}</div>
+                            </div>
+
+                            {/* Ema String Graphic (Simple CSS) */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '-10px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                width: '4px',
+                                height: '20px',
+                                background: 'var(--hakurei-red)',
+                                borderRadius: '2px',
+                                display: isMobile ? 'none' : 'block' // Only vertical look needs hanging string look
+                            }}></div>
+                        </motion.button>
+                    ))}
+                </div>
+
+                {/* Right: Character Detail (Scroll/Illustration) */}
+                <div style={{
+                    flex: 1,
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'rgba(255,255,255,0.6)',
+                    backdropFilter: 'blur(5px)',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(0,0,0,0.05)',
+                    padding: '2rem'
+                }}>
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={selectedChar.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                            style={{
+                                display: 'flex',
+                                flexDirection: isMobile ? 'column' : 'row',
+                                width: '100%',
+                                height: '100%',
+                                gap: '2rem',
+                                alignItems: 'center'
+                            }}
+                        >
+                            {/* Illustration */}
+                            <motion.div
+                                initial={{ x: -20, opacity: 0 }}
+                                animate={{
+                                    x: 0,
+                                    opacity: 1,
+                                    y: [0, -15, 0] // Gentle floating animation
+                                }}
+                                transition={{
+                                    delay: 0.2, // Entrance delay
+                                    y: {
+                                        duration: 6,
+                                        repeat: Infinity,
+                                        ease: "easeInOut"
+                                    }
+                                }}
+                                style={{
+                                    flex: 1,
+                                    height: isMobile ? '350px' : '100%', // Restored size
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    position: 'relative',
+                                    zIndex: 10
+                                }}
+                            >
+                                {/* Circle behind char */}
+                                <div style={{
+                                    position: 'absolute',
+                                    width: isMobile ? '280px' : '400px', // Slightly reduced base size
+                                    height: isMobile ? '280px' : '400px',
+                                    maxWidth: '80vw', // Responsive constraint
+                                    maxHeight: '80vw',
+                                    background: selectedChar.color || 'var(--hakurei-red)',
+                                    opacity: 0.15,
+                                    borderRadius: '50%',
+                                    filter: 'blur(50px)',
+                                    zIndex: 0,
+                                    // Pulse effect for the background circle
+                                    animation: 'pulse 4s infinite ease-in-out alternate'
+                                }}></div>
+                                <style jsx>{`
+                                    @keyframes pulse {
+                                        from { transform: scale(1); opacity: 0.1; }
+                                        to { transform: scale(1.1); opacity: 0.2; }
+                                    }
+                                `}</style>
+
+                                <img
+                                    src={selectedChar.image_url}
+                                    alt={selectedChar.name}
+                                    style={{
+                                        // Dynamic sizing based on viewport to prevent "too big" feel
+                                        height: 'auto',
+                                        width: 'auto',
+                                        maxHeight: isMobile ? '350px' : '65vh', // Limit against window height
+                                        maxWidth: isMobile ? '100%' : '35vw',  // Limit against window width
+                                        objectFit: 'contain',
+                                        zIndex: 1,
+                                        // "Paper Cutout" Glow + Shadow combination for non-angular feel
+                                        filter: 'drop-shadow(0 0 2px #fff) drop-shadow(0 4px 12px rgba(0,0,0,0.2))',
+                                        // Mask the bottom to prevent "cut off" look if the image is partial body
+                                        maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+                                        WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
+                                    }}
+                                />
+                            </motion.div>
+
+                            {/* Text / Scroll Area */}
+                            <motion.div
+                                initial={{ x: 20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                                style={{
+                                    flex: 1,
+                                    background: '#fff',
+                                    padding: '2rem',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                                    border: '1px solid #e5e7eb',
+                                    position: 'relative',
+                                    // Scroll Pattern Borders
+                                    borderTop: '8px solid var(--hakurei-red)',
+                                    borderBottom: '8px solid var(--hakurei-red)',
+                                }}
+                            >
+                                <div style={{
+                                    color: 'var(--hakurei-red)',
+                                    fontWeight: 'bold',
+                                    marginBottom: '0.5rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}>
+                                    <span style={{ width: '8px', height: '8px', background: 'var(--hakurei-red)', transform: 'rotate(45deg)', display: 'inline-block' }}></span>
+                                    {selectedChar.role}
+                                </div>
+                                <h1 style={{
+                                    fontSize: '2.5rem',
+                                    fontWeight: 'bold',
+                                    marginBottom: '1.5rem',
+                                    borderBottom: '2px solid #f3f4f6',
+                                    paddingBottom: '1rem'
+                                }}>
+                                    {selectedChar.name}
+                                </h1>
+                                <p style={{
+                                    lineHeight: '2',
+                                    color: '#4b5563',
+                                    fontSize: '1rem',
+                                    textAlign: 'justify'
+                                }}>
+                                    {selectedChar.description}
+                                </p>
+                            </motion.div>
                         </motion.div>
                     </AnimatePresence>
                 </div>
 
             </div>
-
-            <style jsx>{`
-                /* Ensure clip-path works on the container */
-                .hsr-glass {
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                }
-            `}</style>
         </section>
     );
 }
+

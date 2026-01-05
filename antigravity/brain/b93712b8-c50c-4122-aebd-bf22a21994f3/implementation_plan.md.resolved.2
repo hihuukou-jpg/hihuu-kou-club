@@ -1,0 +1,50 @@
+# New Interactive Features Implementation Plan
+
+## Goal
+Implement three new features to enhance user engagement and "Hakurei Shrine" atmosphere:
+1.  **Ema Board**: Anonymous comment system styled as wooden plaques.
+2.  **Omikuji**: Daily fortune telling.
+3.  **BGM Player**: Background music control.
+
+## User Review Required
+> [!IMPORTANT]
+> **Database Change**: The Ema feature requires a new Supabase table `ema_messages`. I will provide a setup script to create this table automatically using your Service Role Key.
+
+## Proposed Changes
+
+### 1. Ema (Anonymous Comments)
+**Database**:
+- New table: `ema_messages`
+- Columns: [id](file:///C:/Users/kouki/.gemini/hifuu-kou-club/components/Providers.js#5-8) (uuid), `content` (text), `created_at` (timestamp, default now)
+- RLS: Public insert (anon), Public select (anon).
+
+**Backend**:
+- [NEW] `scripts/setup_table.js`: A one-time script to create the table via `supabaseAdmin`.
+- [NEW] `app/api/ema/route.js`: API to POST new comments and GET recent comments.
+
+**Frontend**:
+- [NEW] `components/EmaSection.js`: A visual "shrine board" where messages hang.
+    - "Write Ema" button opens a modal to type a message (max 140 chars).
+    - Submitted message appears as a hanging wooden plaque.
+
+### 2. Omikuji (Fortune)
+**Frontend Only**:
+- [NEW] `components/Omikuji.js`:
+    - Button to "Draw Fortune".
+    - Logic: Randomly selects [Great Blessing, Blessing, Future Blessing, etc.].
+    - Restriction: Uses `localStorage` to limit to 1 draw per day.
+    - Animation: Shake a bamboo cylinder (CSS animation).
+
+### 3. BGM Player
+**Frontend Only**:
+- [NEW] `components/BgmPlayer.js`:
+    - Floating widget (bottom-right).
+    - Controls: Play/Pause, Volume.
+    - Initial State: Paused (autoplay is often blocked by browsers).
+    - Asset: Will use a placeholder or public domain "shrine ambient" sound URL.
+
+## Verification Plan
+1.  **Database**: Run `node scripts/setup_table.js` and verify success.
+2.  **Ema**: Post a test comment, verify it appears on the board.
+3.  **Omikuji**: Draw a fortune, reload page, verify I can't draw again today.
+4.  **BGM**: Click play, verify audio starts (requires user audio interaction).

@@ -1,0 +1,51 @@
+# New Features: Interactions & Entrance
+
+## Changes Implemented
+
+### 1. Ema (Anonymous Comment) Board
+- **Function**: Users can post anonymous messages (up to 140 characters).
+- **Design**: Messages appear as wooden plaques on a corkboard-style background.
+- **Backend**: Uses Supabase `ema_messages` table and `/api/ema` route.
+
+### 2. Interactive Widgets
+- **Omikuji (Fortune)**:
+    - Daily fortune drawing with "Shake" animation.
+    - **Update**: Added "X" close button to dismiss the result.
+- **BGM Player**:
+    - Plays background ambience/music.
+    - **Update**: Added Volume Slider (appears on hover).
+    - **Update**: Improved Autoplay attempt logic.
+
+### 3. Fusuma Entrance Animation
+- **Visual**: Two sliding doors (Washi paper texture) that cover the screen on load.
+- **Sound**: Plays a sliding door sound effect when opening.
+- **Effect**: Opens automatically after a short delay, revealing the site.
+
+## Verification Checklist
+
+### Automated Checks
+- [x] **Server Start**: Next.js (Port 3000).
+- [x] **API Health**: `/api/ema` responds.
+
+### User Verification Steps
+Please open the website and check:
+
+1.  **Entrance**:
+    - [ ] Do you see the Fusuma (doors) when the page loads?
+    - [ ] Do they open smoothly?
+    - [ ] Did you hear the sound effect? (Browser might block it until you interact with the page once).
+
+2.  **Omikuji**:
+    - [ ] Click the Omikuji box.
+    - [ ] See the result.
+    - [ ] Click the "X" button. Does it disappear?
+
+3.  **BGM Player**:
+    - [ ] Hover over the music icon (bottom right).
+    - [ ] Use the slider to change volume.
+    - [ ] Toggle mute/play.
+
+4.  **Ema**:
+    - [ ] Click "Write Ema".
+    - [ ] Post a test message.
+    - [ ] Verify it appears on the board.
