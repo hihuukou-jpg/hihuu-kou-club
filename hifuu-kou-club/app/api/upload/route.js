@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { supabase } from '../../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../../lib/supabase';
 
 export async function POST(request) {
     const session = await getServerSession(authOptions);
@@ -22,8 +22,10 @@ export async function POST(request) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        // Simplified: Use standard client (requires RLS policy change)
-        const { data, error } = await supabase
+        // Use admin client if available to bypass RLS, otherwise try standard client
+        const supabaseClient = supabaseAdmin || supabase;
+
+        const { data, error } = await supabaseClient
             .storage
             .from('uploads')
             .upload(filePath, buffer, {
@@ -36,7 +38,7 @@ export async function POST(request) {
             throw error;
         }
 
-        const { data: { publicUrl } } = supabase
+        const { data: { publicUrl } } = supabaseClient
             .storage
             .from('uploads')
             .getPublicUrl(filePath);

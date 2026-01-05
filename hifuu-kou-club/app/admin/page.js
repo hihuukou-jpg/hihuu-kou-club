@@ -201,7 +201,7 @@ export default function AdminPage() {
         setCharRole(char.role);
         setCharDesc(char.description);
         setCharColor(char.color);
-        setCharImage(char.image || "");
+        setCharImage(char.image_url || "");
         setUploadFile(null);
         const fileInput = document.getElementById('fileInput');
         if (fileInput) fileInput.value = "";
@@ -343,7 +343,7 @@ export default function AdminPage() {
                             <div key={c.id} style={{ border: "1px solid #eee", padding: "1rem", position: "relative", background: "#fff", boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
                                     <div style={{ width: "30px", height: "30px", background: c.color, borderRadius: "50%", overflow: "hidden", border: "1px solid #ddd" }}>
-                                        {c.image && <img src={c.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+                                        {c.image_url && <img src={c.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
                                     </div>
                                     <strong>{c.name}</strong>
                                 </div>

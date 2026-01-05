@@ -1,4 +1,4 @@
-Î"use client";
+ñÔ"use client";
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
@@ -38,10 +38,9 @@ export default function AdminPage() {
     const [diaryProgress, setDiaryProgress] = useState(0);
 
     useEffect(() => {
-        if (session) {
-            fetchData();
-        }
-    }, [session]);
+        // ALWAYS fetch data so guests can see it
+        fetchData();
+    }, []);
 
     const fetchData = async () => {
         const n = await fetch("/api/news").then(res => res.json());
@@ -56,6 +55,7 @@ export default function AdminPage() {
 
     const handleAddNews = async (e) => {
         e.preventDefault();
+        if (!session) return; // double check
         await fetch("/api/news", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -68,6 +68,7 @@ export default function AdminPage() {
 
     const handleAddVideo = async (e) => {
         e.preventDefault();
+        if (!session) return;
         await fetch("/api/videos", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -79,6 +80,7 @@ export default function AdminPage() {
     };
 
     const handleDeleteVideo = async (id) => {
+        if (!session) return;
         if (!confirm("æœ¬å½“ã«å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ")) return;
         await fetch(`/api/videos?id=${id}`, { method: "DELETE" });
         fetchData();
@@ -86,6 +88,7 @@ export default function AdminPage() {
 
     const handleSaveDiary = async (e) => {
         e.preventDefault();
+        if (!session) return;
         await fetch("/api/diary", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -118,6 +121,7 @@ export default function AdminPage() {
     };
 
     const handleDeleteDiary = async (id) => {
+        if (!session) return;
         if (!confirm("æœ¬å½“ã«å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ")) return;
         await fetch(`/api/diary?id=${id}`, { method: "DELETE" });
         fetchData();
@@ -125,6 +129,7 @@ export default function AdminPage() {
 
     const handleSaveChar = async (e) => {
         e.preventDefault();
+        if (!session) return;
 
         let imageUrl = charImage;
 
@@ -183,6 +188,7 @@ export default function AdminPage() {
     };
 
     const handleDeleteChar = async (id) => {
+        if (!session) return;
         if (!confirm("æœ¬å½“ã«å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ")) return;
         await fetch(`/api/characters?id=${id}`, { method: "DELETE" });
         fetchData();
@@ -195,108 +201,85 @@ export default function AdminPage() {
         setCharRole(char.role);
         setCharDesc(char.description);
         setCharColor(char.color);
-        setCharImage(char.image || "");
+        setCharImage(char.image_url || "");
         setUploadFile(null);
         const fileInput = document.getElementById('fileInput');
         if (fileInput) fileInput.value = "";
     };
 
     return (
-        <div style={{ padding: "2rem", color: "var(--text-main)", background: "var(--hakurei-white)", minHeight: "100vh", fontFamily: "var(--font-serif)" }}>
+        <div style={{ padding: "2rem", paddingTop: "120px", color: "var(--text-main)", background: "var(--hakurei-white)", minHeight: "100vh", fontFamily: "var(--font-serif)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-                <h1 style={{ fontSize: "2rem", color: "var(--hakurei-red)" }}>ç®¡ç†ãƒ€ãƒƒã‚·ãƒ¥ãƒœãƒ¼ãƒ‰</h1>
+                <h1 style={{ fontSize: "2rem", color: "var(--hakurei-red)" }}>ç®¡ç†ãƒ€ãƒƒã‚·ãƒ¥ãƒœãƒ¼ãƒ‰ {session ? "(ç·¨é›†ãƒ¢ãƒ¼ãƒ‰)" : "(é–²è¦§ãƒ¢ãƒ¼ãƒ‰)"}</h1>
                 <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                    <span>ãƒ­ã‚°ã‚¤ãƒ³ä¸­: {session?.user?.name || "Admin"}</span>
-                    <button onClick={() => signOut()} style={{ padding: "0.5rem 1rem", border: "1px solid #ccc", background: "white", cursor: "pointer" }}>ãƒ­ã‚°ã‚¢ã‚¦ãƒˆ</button>
+                    {session ? (
+                        <>
+                            <span>Login: {session.user.name}</span>
+                            <button onClick={() => signOut()} style={{ padding: "0.5rem 1rem", border: "1px solid #ccc", background: "white", cursor: "pointer" }}>ãƒ­ã‚°ã‚¢ã‚¦ãƒˆ</button>
+                        </>
+                    ) : (
+                        <button onClick={() => signIn()} style={{ padding: "0.5rem 1rem", border: "none", background: "var(--hakurei-red)", color: "white", cursor: "pointer", borderRadius: "4px" }}>ç®¡ç†è€…ãƒ­ã‚°ã‚¤ãƒ³</button>
+                    )}
                 </div>
             </div>
 
             <div style={{ marginBottom: "2rem", borderBottom: "1px solid #ccc" }}>
-                <button
-                    onClick={() => setActiveTab("news")}
-                    style={{
-                        padding: "1rem",
-                        background: "transparent",
-                        border: "none",
-                        color: activeTab === "news" ? "var(--hakurei-red)" : "#888",
-                        borderBottom: activeTab === "news" ? "2px solid var(--hakurei-red)" : "none",
-                        cursor: "pointer",
-                        fontSize: "1.2rem"
-                    }}
-                >
-                    ãŠçŸ¥ã‚‰ã›ç®¡ç†
-                </button>
-                <button
-                    onClick={() => setActiveTab("chars")}
-                    style={{
-                        padding: "1rem",
-                        background: "transparent",
-                        border: "none",
-                        color: activeTab === "chars" ? "var(--hakurei-red)" : "#888",
-                        borderBottom: activeTab === "chars" ? "2px solid var(--hakurei-red)" : "none",
-                        cursor: "pointer",
-                        fontSize: "1.2rem"
-                    }}
-                >
-                    ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ç®¡ç†
-                </button>
-                <button
-                    onClick={() => setActiveTab("diary")}
-                    style={{
-                        padding: "1rem",
-                        background: "transparent",
-                        border: "none",
-                        color: activeTab === "diary" ? "var(--hakurei-red)" : "#888",
-                        borderBottom: activeTab === "diary" ? "2px solid var(--hakurei-red)" : "none",
-                        cursor: "pointer",
-                        fontSize: "1.2rem"
-                    }}
-                >
-                    æ´»å‹•æ—¥èªŒç®¡ç†
-                </button>
-                <button
-                    onClick={() => setActiveTab("videos")}
-                    style={{
-                        padding: "1rem",
-                        background: "transparent",
-                        border: "none",
-                        color: activeTab === "videos" ? "var(--hakurei-red)" : "#888",
-                        borderBottom: activeTab === "videos" ? "2px solid var(--hakurei-red)" : "none",
-                        cursor: "pointer",
-                        fontSize: "1.2rem"
-                    }}
-                >
-                    å‹•ç”»ç®¡ç†
-                </button>
+                {["news", "chars", "diary", "videos"].map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        style={{
+                            padding: "1rem",
+                            background: "transparent",
+                            border: "none",
+                            color: activeTab === tab ? "var(--hakurei-red)" : "#888",
+                            borderBottom: activeTab === tab ? "2px solid var(--hakurei-red)" : "none",
+                            cursor: "pointer",
+                            fontSize: "1.2rem",
+                            marginRight: "1rem"
+                        }}
+                    >
+                        {tab === "news" ? "ãŠçŸ¥ã‚‰ã›ç®¡ç†" : tab === "chars" ? "ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ç®¡ç†" : tab === "diary" ? "æ´»å‹•æ—¥èªŒç®¡ç†" : "å‹•ç”»ç®¡ç†"}
+                    </button>
+                ))}
             </div>
 
+            {/* TAB CONTENT */}
+
+            {/* NEWS */}
             {activeTab === "news" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <form onSubmit={handleAddNews} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                        <h3 style={{ marginBottom: "1rem" }}>ãŠçŸ¥ã‚‰ã›æŠ•ç¨¿</h3>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <input
-                                type="text"
-                                placeholder="ã‚¿ã‚¤ãƒˆãƒ«"
-                                value={newsTitle}
-                                onChange={e => setNewsTitle(e.target.value)}
-                                style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
-                                required
-                            />
+                    {session ? (
+                        <form onSubmit={handleAddNews} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <h3 style={{ marginBottom: "1rem" }}>ãŠçŸ¥ã‚‰ã›æŠ•ç¨¿</h3>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <input
+                                    type="text"
+                                    placeholder="ã‚¿ã‚¤ãƒˆãƒ«"
+                                    value={newsTitle}
+                                    onChange={e => setNewsTitle(e.target.value)}
+                                    style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                    required
+                                />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <textarea
+                                    placeholder="æœ¬æ–‡"
+                                    value={newsContent}
+                                    onChange={e => setNewsContent(e.target.value)}
+                                    style={{ width: "100%", padding: "0.8rem", height: "100px", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                    required
+                                />
+                            </div>
+                            <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                æŠ•ç¨¿ã™ã‚‹
+                            </button>
+                        </form>
+                    ) : (
+                        <div style={{ padding: "1rem", background: "#eee", marginBottom: "2rem", borderRadius: "4px" }}>
+                            ç¾åœ¨ã€ã‚²ã‚¹ãƒˆãƒ¢ãƒ¼ãƒ‰ï¼ˆé–²è¦§ã®ã¿ï¼‰ã§ã™ã€‚æŠ•ç¨¿ã™ã‚‹ã«ã¯ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ãã ã•ã„ã€‚
                         </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <textarea
-                                placeholder="æœ¬æ–‡"
-                                value={newsContent}
-                                onChange={e => setNewsContent(e.target.value)}
-                                style={{ width: "100%", padding: "0.8rem", height: "100px", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
-                                required
-                            />
-                        </div>
-                        <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
-                            æŠ•ç¨¿ã™ã‚‹
-                        </button>
-                    </form>
+                    )}
 
                     <h3>æœ€è¿‘ã®ãŠçŸ¥ã‚‰ã›</h3>
                     <ul>
@@ -310,51 +293,49 @@ export default function AdminPage() {
                 </motion.div>
             )}
 
+            {/* CHARACTERS */}
             {activeTab === "chars" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <form onSubmit={handleSaveChar} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                        <h3 style={{ marginBottom: "1rem" }}>ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼è¿½åŠ ãƒ»ç·¨é›†</h3>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
-                            <input type="text" placeholder="ID (ä¾‹: renko)" value={charId} onChange={e => setCharId(e.target.value)} style={{ padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} required />
-                            <input type="text" placeholder="åå‰" value={charName} onChange={e => setCharName(e.target.value)} style={{ padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} required />
-                        </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <input type="text" placeholder="å½¹å‰²ãƒ»è‚©æ›¸ã" value={charRole} onChange={e => setCharRole(e.target.value)} style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} />
-                        </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <textarea placeholder="èª¬æ˜æ–‡" value={charDesc} onChange={e => setCharDesc(e.target.value)} style={{ width: "100%", height: "100px", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} />
-                        </div>
-
-                        <div style={{ marginBottom: "1rem", border: "1px solid #eee", padding: "1rem", borderRadius: "4px" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>ç«‹ã¡çµµç”»åƒ</label>
-
-                            <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem", color: "#666" }}>
-                                {charImage ? `ç¾åœ¨ã®è¨­å®š: ${charImage}` : "ç”»åƒæœªè¨­å®š"}
+                    {session && (
+                        <form onSubmit={handleSaveChar} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <h3 style={{ marginBottom: "1rem" }}>ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼è¿½åŠ ãƒ»ç·¨é›†</h3>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+                                <input type="text" placeholder="ID (ä¾‹: renko)" value={charId} onChange={e => setCharId(e.target.value)} style={{ padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} required />
+                                <input type="text" placeholder="åå‰" value={charName} onChange={e => setCharName(e.target.value)} style={{ padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} required />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <input type="text" placeholder="å½¹å‰²ãƒ»è‚©æ›¸ã" value={charRole} onChange={e => setCharRole(e.target.value)} style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <textarea placeholder="èª¬æ˜æ–‡" value={charDesc} onChange={e => setCharDesc(e.target.value)} style={{ width: "100%", height: "100px", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} />
                             </div>
 
-                            <input
-                                id="fileInput"
-                                type="file"
-                                accept="image/*"
-                                onChange={e => {
-                                    if (e.target.files?.[0]) {
-                                        setUploadFile(e.target.files[0]);
-                                    }
-                                }}
-                            />
-                            <div style={{ fontSize: "0.8rem", color: "#888", marginTop: "0.5rem" }}>
-                                â€»ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ã¨ã€ç¾åœ¨ã®è¨­å®šã¯ä¸Šæ›¸ãã•ã‚Œã¾ã™ã€‚
+                            <div style={{ marginBottom: "1rem", border: "1px solid #eee", padding: "1rem", borderRadius: "4px" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>ç«‹ã¡çµµç”»åƒ</label>
+                                <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem", color: "#666" }}>
+                                    {charImage ? `ç¾åœ¨ã®è¨­å®š: ${charImage}` : "ç”»åƒæœªè¨­å®š"}
+                                </div>
+                                <input
+                                    id="fileInput"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={e => {
+                                        if (e.target.files?.[0]) {
+                                            setUploadFile(e.target.files[0]);
+                                        }
+                                    }}
+                                />
                             </div>
-                        </div>
 
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label>ãƒ†ãƒ¼ãƒã‚«ãƒ©ãƒ¼: </label>
-                            <input type="color" value={charColor} onChange={e => setCharColor(e.target.value)} />
-                        </div>
-                        <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
-                            ä¿å­˜ã™ã‚‹
-                        </button>
-                    </form>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label>ãƒ†ãƒ¼ãƒã‚«ãƒ©ãƒ¼: </label>
+                                <input type="color" value={charColor} onChange={e => setCharColor(e.target.value)} />
+                            </div>
+                            <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                ä¿å­˜ã™ã‚‹
+                            </button>
+                        </form>
+                    )}
 
                     <h3>ç™»éŒ²æ¸ˆã¿ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼</h3>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
@@ -362,92 +343,103 @@ export default function AdminPage() {
                             <div key={c.id} style={{ border: "1px solid #eee", padding: "1rem", position: "relative", background: "#fff", boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
                                     <div style={{ width: "30px", height: "30px", background: c.color, borderRadius: "50%", overflow: "hidden", border: "1px solid #ddd" }}>
-                                        {c.image && <img src={c.image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+                                        {c.image_url && <img src={c.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
                                     </div>
                                     <strong>{c.name}</strong>
                                 </div>
                                 <div style={{ fontSize: "0.8rem", color: "#888" }}>{c.role}</div>
-                                <button
-                                    onClick={() => handleEditChar(c)}
-                                    style={{ marginTop: "1rem", width: "100%", padding: "0.4rem", background: "#f0f0f0", border: "none", cursor: "pointer", fontSize: "0.8rem" }}
-                                >
-                                    ç·¨é›†
-                                </button>
-                                <button
-                                    onClick={() => handleDeleteChar(c.id)}
-                                    style={{ position: "absolute", top: "0.5rem", right: "0.5rem", background: "transparent", border: "none", color: "#999", cursor: "pointer", fontSize: "1.2rem" }}
-                                >
-                                    Ã—
-                                </button>
+                                {session && (
+                                    <>
+                                        <button
+                                            onClick={() => handleEditChar(c)}
+                                            style={{ marginTop: "1rem", width: "100%", padding: "0.4rem", background: "#f0f0f0", border: "none", cursor: "pointer", fontSize: "0.8rem" }}
+                                        >
+                                            ç·¨é›†
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteChar(c.id)}
+                                            style={{ position: "absolute", top: "0.5rem", right: "0.5rem", background: "transparent", border: "none", color: "#999", cursor: "pointer", fontSize: "1.2rem" }}
+                                        >
+                                            Ã—
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         ))}
                     </div>
                 </motion.div>
             )}
 
+            {/* DIARY */}
             {activeTab === "diary" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <form onSubmit={handleSaveDiary} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                        <h3 style={{ marginBottom: "1rem" }}>æ—¥èªŒã®æŠ•ç¨¿ãƒ»ç·¨é›†</h3>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem" }}>æ—¥ä»˜ (YYYY.MM.DD)</label>
-                            <input
-                                type="text"
-                                placeholder="2026.01.01"
-                                value={diaryDate}
-                                onChange={e => setDiaryDate(e.target.value)}
-                                style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
-                                required
-                            />
-                        </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem" }}>ã‚¿ã‚¤ãƒˆãƒ«</label>
-                            <input
-                                type="text"
-                                placeholder="ã‚¿ã‚¤ãƒˆãƒ«"
-                                value={diaryTitle}
-                                onChange={e => setDiaryTitle(e.target.value)}
-                                style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
-                                required
-                            />
-                        </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem" }}>å†…å®¹</label>
-                            <DiaryEditor
-                                content={diaryContent}
-                                onChange={setDiaryContent}
-                            />
-                        </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem" }}>é€²æ—åº¦ ({diaryProgress}%)</label>
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={diaryProgress}
-                                onChange={e => setDiaryProgress(e.target.value)}
-                                style={{ width: "100%" }}
-                            />
-                        </div>
+                    {session ? (
+                        <form onSubmit={handleSaveDiary} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <h3 style={{ marginBottom: "1rem" }}>æ—¥èªŒã®æŠ•ç¨¿ãƒ»ç·¨é›†</h3>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem" }}>æ—¥ä»˜ (YYYY.MM.DD)</label>
+                                <input
+                                    type="text"
+                                    placeholder="2026.01.01"
+                                    value={diaryDate}
+                                    onChange={e => setDiaryDate(e.target.value)}
+                                    style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                    required
+                                />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem" }}>ã‚¿ã‚¤ãƒˆãƒ«</label>
+                                <input
+                                    type="text"
+                                    placeholder="ã‚¿ã‚¤ãƒˆãƒ«"
+                                    value={diaryTitle}
+                                    onChange={e => setDiaryTitle(e.target.value)}
+                                    style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                    required
+                                />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem" }}>å†…å®¹</label>
+                                <DiaryEditor
+                                    content={diaryContent}
+                                    onChange={setDiaryContent}
+                                />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem" }}>é€²æ—åº¦ ({diaryProgress}%)</label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value={diaryProgress}
+                                    onChange={e => setDiaryProgress(e.target.value)}
+                                    style={{ width: "100%" }}
+                                />
+                            </div>
 
-                        <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
-                            {diaryId ? "æ›´æ–°ã™ã‚‹" : "æŠ•ç¨¿ã™ã‚‹"}
-                        </button>
-                        {diaryId && (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setDiaryId(null);
-                                    setDiaryDate("");
-                                    setDiaryTitle("");
-                                    setDiaryContent("");
-                                    setDiaryProgress(0);
-                                }}
-                                style={{ padding: "0.8rem 2rem", background: "#ccc", border: "none", color: "#333", cursor: "pointer", marginLeft: "1rem" }}>
-                                ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+                            <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                {diaryId ? "æ›´æ–°ã™ã‚‹" : "æŠ•ç¨¿ã™ã‚‹"}
                             </button>
-                        )}
-                    </form>
+                            {diaryId && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setDiaryId(null);
+                                        setDiaryDate("");
+                                        setDiaryTitle("");
+                                        setDiaryContent("");
+                                        setDiaryProgress(0);
+                                    }}
+                                    style={{ padding: "0.8rem 2rem", background: "#ccc", border: "none", color: "#333", cursor: "pointer", marginLeft: "1rem" }}>
+                                    ã‚­ãƒ£ãƒ³ã‚»ãƒ«
+                                </button>
+                            )}
+                        </form>
+                    ) : (
+                        <div style={{ padding: "1rem", background: "#eee", marginBottom: "2rem", borderRadius: "4px" }}>
+                            ç¾åœ¨ã€ã‚²ã‚¹ãƒˆãƒ¢ãƒ¼ãƒ‰ï¼ˆé–²è¦§ã®ã¿ï¼‰ã§ã™ã€‚
+                        </div>
+                    )}
 
                     <h3>éå»ã®æ—¥èªŒ</h3>
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -458,46 +450,51 @@ export default function AdminPage() {
                                     <h4 style={{ margin: "0.5rem 0" }}>{d.title}</h4>
                                     <div style={{ fontSize: "0.8rem", color: "#aaa", marginTop: "0.5rem" }}>é€²æ—: {d.progress}%</div>
                                 </div>
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    <button onClick={() => handleEditDiary(d)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer" }}>ç·¨é›†</button>
-                                    <button onClick={() => handleDeleteDiary(d.id)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "#fdd", border: "none", color: "red" }}>å‰Šé™¤</button>
-                                </div>
+                                {session && (
+                                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                                        <button onClick={() => handleEditDiary(d)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer" }}>ç·¨é›†</button>
+                                        <button onClick={() => handleDeleteDiary(d.id)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "#fdd", border: "none", color: "red" }}>å‰Šé™¤</button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
                 </motion.div>
             )}
 
+            {/* VIDEOS */}
             {activeTab === "videos" && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <form onSubmit={handleAddVideo} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                        <h3 style={{ marginBottom: "1rem" }}>å‹•ç”»ã®è¿½åŠ </h3>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem" }}>å‹•ç”»ã‚¿ã‚¤ãƒˆãƒ«</label>
-                            <input
-                                type="text"
-                                placeholder="ä¾‹: æ–°ä½œPV"
-                                value={videoTitle}
-                                onChange={e => setVideoTitle(e.target.value)}
-                                style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
-                                required
-                            />
-                        </div>
-                        <div style={{ marginBottom: "1rem" }}>
-                            <label style={{ display: "block", marginBottom: "0.5rem" }}>YouTube URL</label>
-                            <input
-                                type="text"
-                                placeholder="https://www.youtube.com/watch?v=..."
-                                value={videoUrl}
-                                onChange={e => setVideoUrl(e.target.value)}
-                                style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
-                                required
-                            />
-                        </div>
-                        <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
-                            è¿½åŠ ã™ã‚‹
-                        </button>
-                    </form>
+                    {session ? (
+                        <form onSubmit={handleAddVideo} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <h3 style={{ marginBottom: "1rem" }}>å‹•ç”»ã®è¿½åŠ </h3>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem" }}>å‹•ç”»ã‚¿ã‚¤ãƒˆãƒ«</label>
+                                <input
+                                    type="text"
+                                    placeholder="ä¾‹: æ–°ä½œPV"
+                                    value={videoTitle}
+                                    onChange={e => setVideoTitle(e.target.value)}
+                                    style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                    required
+                                />
+                            </div>
+                            <div style={{ marginBottom: "1rem" }}>
+                                <label style={{ display: "block", marginBottom: "0.5rem" }}>YouTube URL</label>
+                                <input
+                                    type="text"
+                                    placeholder="https://www.youtube.com/watch?v=..."
+                                    value={videoUrl}
+                                    onChange={e => setVideoUrl(e.target.value)}
+                                    style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                    required
+                                />
+                            </div>
+                            <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                è¿½åŠ ã™ã‚‹
+                            </button>
+                        </form>
+                    ) : null}
 
                     <h3>ç™»éŒ²æ¸ˆã¿å‹•ç”»</h3>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1rem" }}>
@@ -505,7 +502,9 @@ export default function AdminPage() {
                             <div key={v.id} style={{ border: "1px solid #eee", padding: "1rem", background: "#fff" }}>
                                 <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>{v.title}</div>
                                 <div style={{ fontSize: "0.8rem", color: "#888", wordBreak: "break-all", marginBottom: "1rem" }}>{v.url}</div>
-                                <button onClick={() => handleDeleteVideo(v.id)} style={{ width: "100%", padding: "0.5rem", background: "#fee", border: "none", color: "red", cursor: "pointer" }}>å‰Šé™¤</button>
+                                {session && (
+                                    <button onClick={() => handleDeleteVideo(v.id)} style={{ width: "100%", padding: "0.5rem", background: "#fee", border: "none", color: "red", cursor: "pointer" }}>å‰Šé™¤</button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -515,5 +514,141 @@ export default function AdminPage() {
         </div>
     );
 }
-¨ *cascade08¨á*cascade08áÈ *cascade08Èõ*cascade08õ¤*cascade08¤“ *cascade08“’*cascade08’½ *cascade08½«	*cascade08«	­	 *cascade08­	Ø*cascade08Ø÷ *cascade08÷½*cascade08½Å *cascade08ÅŒ*cascade08Œ® *cascade08®Á *cascade08ÁØ*cascade08ØÛ *cascade08Ûß *cascade08ßï *cascade08ï·*cascade08·  *cascade08 Ø  *cascade08Ø ©(*cascade08©(ù* *cascade08ù*›+*cascade08›+º+ *cascade08º+¼+*cascade08¼+é+ *cascade08é+ò+*cascade08ò+ƒ, *cascade08ƒ,Œ,*cascade08Œ,, *cascade08,¦,*cascade08¦,·, *cascade08·,À,*cascade08À,ã, *cascade08ã,.*cascade08.ë. *cascade08ë.‰/*cascade08‰/‚0 *cascade08‚0„0*cascade08„0…0 *cascade08…0†0*cascade08†0‡0 *cascade08‡0‰0*cascade08‰0Œ0 *cascade08Œ00*cascade0800 *cascade0800*cascade080’0 *cascade08’0“0*cascade08“0”0 *cascade08”0—0*cascade08—00 *cascade0800*cascade080 0 *cascade08 0£0*cascade08£0¥0 *cascade08¥0¦0*cascade08¦0¨0 *cascade08¨0©0*cascade08©0ª0 *cascade08ª0«0*cascade08«0­0 *cascade08­0®0*cascade08®0¯0 *cascade08¯0±0*cascade08±0²0 *cascade08²0µ0*cascade08µ0·0 *cascade08·0½0*cascade08½0¾0 *cascade08¾0¿0*cascade08¿0À0 *cascade08À0Â0*cascade08Â0Ã0 *cascade08Ã0Ä0*cascade08Ä0Å0 *cascade08Å0Æ0*cascade08Æ0Ç0 *cascade08Ç0É0*cascade08É0Ó0 *cascade08Ó0è0*cascade08è0ğ0 *cascade08ğ0ò0*cascade08ò0ó0 *cascade08ó01*cascade081‚1 *cascade08‚1‡1*cascade08‡1‘1 *cascade08‘1ª1*cascade08ª1²1 *cascade08²1µ1*cascade08µ1¶1 *cascade08¶1¼1*cascade08¼1¾1 *cascade08¾1Å1*cascade08Å1Æ1 *cascade08Æ1È1*cascade08È1É1 *cascade08É1Í1*cascade08Í1Ï1 *cascade08Ï1Ğ1*cascade08Ğ1Ü1 *cascade08Ü1ß1*cascade08ß1á1 *cascade08á1â1*cascade08â1ã1 *cascade08ã1ä1*cascade08ä1ç1 *cascade08ç1è1*cascade08è1ë1 *cascade08ë1ì1*cascade08ì1ñ1 *cascade08ñ1ó1*cascade08ó1ı1 *cascade08ı1”2*cascade08”2•2 *cascade08•2—2*cascade08—2˜2 *cascade08˜2œ2*cascade08œ2¦2 *cascade08¦2º2*cascade08º2Ä2 *cascade08Ä2É2*cascade08É2Ê2 *cascade08Ê2Ó2*cascade08Ó2Ô2 *cascade08Ô2Õ2*cascade08Õ2Ö2 *cascade08Ö2Ù2*cascade08Ù2Ú2 *cascade08Ú2İ2*cascade08İ2Ş2 *cascade08Ş2á2*cascade08á2â2 *cascade08â2ô2*cascade08ô2õ2 *cascade08õ2û2*cascade08û2…3 *cascade08…3‡3*cascade08‡3ˆ3 *cascade08ˆ3“3*cascade08“3”3 *cascade08”3•3*cascade08•3–3 *cascade08–33*cascade083Ÿ3 *cascade08Ÿ3£3*cascade08£3¤3 *cascade08¤3¥3*cascade08¥3¦3 *cascade08¦3¨3*cascade08¨3°3 *cascade08°3±3*cascade08±3ã3 *cascade08ã3ä3*cascade08ä3ç3 *cascade08ç3é3*cascade08é3ê3 *cascade08ê3î3*cascade08î3ï3 *cascade08ï3ù3*cascade08ù3ú3 *cascade08ú3ı3*cascade08ı3ş3 *cascade08ş3‚4*cascade08‚4…4 *cascade08…4™4*cascade08™4š4 *cascade08š4¢4*cascade08¢4¤4 *cascade08¤4°4*cascade08°4±4 *cascade08±4²4*cascade08²4¸4 *cascade08¸4º4*cascade08º4½4 *cascade08½4Â4*cascade08Â4Ã4 *cascade08Ã4Ä4*cascade08Ä4Å4 *cascade08Å4Ç4*cascade08Ç4Ê4 *cascade08Ê4Ë4*cascade08Ë4Ì4 *cascade08Ì4Ó4*cascade08Ó4Ô4 *cascade08Ô4Û4*cascade08Û4Ó5 *cascade08Ó5Ô5*cascade08Ô5ñ5 *cascade08ñ5«6*cascade08«6¬6 *cascade08¬6²6 *cascade08²6Ç6*cascade08Ç6ˆ7 *cascade08ˆ77*cascade087¾7 *cascade08¾7Ï7*cascade08Ï7×7 *cascade08×7Ø7*cascade08Ø7İ7 *cascade08İ7Ş7*cascade08Ş7ã7 *cascade08ã7î7*cascade08î7·8 *cascade08·8¸8*cascade08¸8¹8 *cascade08¹8º8*cascade08º8»8 *cascade08»8¾8*cascade08¾8Á8 *cascade08Á8Ä8*cascade08Ä8Å8 *cascade08Å8É8*cascade08É8Ë8 *cascade08Ë8Ì8*cascade08Ì8ã8 *cascade08ã8æ8*cascade08æ8é8 *cascade08é8ë8*cascade08ë8ì8 *cascade08ì8ï8*cascade08ï8ğ8 *cascade08ğ8ó8*cascade08ó8“9 *cascade08“9¢9*cascade08¢9¥: *cascade08¥:¨:*cascade08¨:û> *cascade08û>?*cascade08?ùC *cascade08ùC‘D*cascade08‘D®D *cascade08®D¬I*cascade08¬I¸I *cascade08¸I³N*cascade08³NşO *cascade08şO‚P*cascade08‚PªP *cascade08ªPÔP*cascade08ÔPõP *cascade08õP–Q*cascade08–Q—Q *cascade08—Q©Q*cascade08©QîR *cascade08îRúR*cascade08úR×T *cascade08×TİT*cascade08İTéT *cascade08éTîT*cascade08îTïT *cascade08ïT÷T*cascade08÷T‚U *cascade08‚U†U*cascade08†UŠW *cascade08ŠWW*cascade08W‚Y *cascade08‚YˆY*cascade08ˆY”Y *cascade08”Y™Y*cascade08™YšY *cascade08šY¢Y*cascade08¢Y­Y *cascade08­Y±Y*cascade08±Yå[ *cascade08å[ñ[*cascade08ñ[Í\ *cascade08Í\â\*cascade08â\û] *cascade08û]ş]*cascade08ş]Ÿb *cascade08Ÿb£b*cascade08£bËb *cascade08Ëbõb*cascade08õb–c *cascade08–c·c*cascade08·c¸c *cascade08¸cÙc*cascade08Ùce *cascade08e¢e*cascade08¢ef *cascade08f”f*cascade08”f f *cascade08 f¥f*cascade08¥f¦f *cascade08¦f®f*cascade08®f¹f *cascade08¹f½f*cascade08½f‹g *cascade08‹g‘g*cascade08‘gúg *cascade08úg€h*cascade08€hŒh *cascade08Œh‘h*cascade08‘h’h *cascade08’hšh*cascade08šh¥h *cascade08¥h©h*cascade08©h×i *cascade08×iéi*cascade08éiáj *cascade08ájçj*cascade08çjój *cascade08ójøj*cascade08øjùj *cascade08ùjk*cascade08kŒk *cascade08Œkk*cascade08k¬l *cascade08¬lµl*cascade08µl¾m *cascade08¾mêm*cascade08êmîm *cascade08îmÒn*cascade08Ònİn *cascade08İnón*cascade08ónôn *cascade08ôn€o*cascade08€oo *cascade08oÛo*cascade08ÛoÜo *cascade08Üoéo*cascade08éoêo *cascade08êoòp*cascade08òpıp *cascade08ıpçs*cascade08çsès *cascade08èsšt*cascade08št›t *cascade08›t t*cascade08 t¡t *cascade08¡t¤t*cascade08¤t¥t *cascade08¥tËv*cascade08ËvÏv *cascade08ÏvÜv*cascade08Üvİv *cascade08İvëw*cascade08ëwìw *cascade08ìwïw*cascade08ïwx *cascade08x’x*cascade08’x÷x *cascade08÷x‰y*cascade08‰yŠ{ *cascade08Š{{*cascade08{{ *cascade08{{*cascade08{’{ *cascade08’{•{*cascade08•{±{ *cascade08±{¶{*cascade08¶{ì{ *cascade08ì{ø{*cascade08ø{Ô| *cascade08Ô|ò|*cascade08ò|ï~ *cascade08ï~ò~*cascade08ò~š *cascade08š×*cascade08×‹€ *cascade08‹€*cascade08— *cascade08—˜*cascade08˜§ *cascade08§¨*cascade08¨Ø *cascade08Ø¶‚*cascade08¶‚¸‚ *cascade08¸‚Ä‚*cascade08Ä‚Å‚ *cascade08Å‚Í‚*cascade08Í‚Î‚ *cascade08Î‚â‚*cascade08â‚ã‚ *cascade08ã‚ä‚*cascade08ä‚å‚ *cascade08å‚õ‚*cascade08õ‚ù‚ *cascade08ù‚ú‚*cascade08ú‚û‚ *cascade08û‚ƒƒ*cascade08ƒƒ„ƒ *cascade08„ƒ‘ƒ*cascade08‘ƒ˜ƒ *cascade08˜ƒ™ƒ*cascade08™ƒ»ƒ *cascade08»ƒëƒ*cascade08ëƒ§„ *cascade08§„Ï„*cascade08Ï„ó… *cascade08ó…‰*cascade08‰ì‰ *cascade08ì‰ï‰*cascade08ï‰ı‰ *cascade08ı‰€Š*cascade08€Š“Š *cascade08“ŠšŠ*cascade08šŠœŠ *cascade08œŠŠ*cascade08Š¹Š *cascade08¹Š½Š*cascade08½ŠŞŠ *cascade08ŞŠßŠ*cascade08ßŠàŠ *cascade08àŠáŠ*cascade08áŠ±‹ *cascade08±‹³‹*cascade08³‹êŒ *cascade08êŒœ *cascade08œ œ*cascade08 œ¢œ *cascade08¢œ§œ*cascade08§œËœ *cascade08
-ËœÏœÏœĞœ *cascade08ĞœÒœ*cascade08Òœó° *cascade08ó°ó°*cascade08ó°¡µ *cascade08¡µâÌ*cascade08âÌñÍ *cascade08ñÍÎ *cascade082?file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js
+¨ *cascade08¨á*cascade08áÈ *cascade08Èõ*cascade08õ¤*cascade08¤“ *cascade08“’*cascade08’½ *cascade08½«	*cascade08«	­	 *cascade08­	Ø*cascade08Ø÷ *cascade08÷‚ *cascade08‚††‡ *cascade08‡ŒŒ *cascade08‘‘“ *cascade08“””• *cascade08•˜˜š *cascade08š  ü *cascade08üÂ*cascade08ÂÊ *cascade08Ê‘*cascade08‘³ *cascade08³Æ *cascade08Æİ*cascade08İà *cascade08à² *cascade08²áá“ *cascade08“£ *cascade08£Û *cascade08ÛúúÕ *cascade08Õôô© *cascade08©â *cascade08âı *cascade08ıœ œ À! *cascade08À!ˆ" *cascade08ˆ"§"§"ø)*cascade08ø)È, *cascade08È,ê,*cascade08ê,‰- *cascade08‰-‹-*cascade08‹-¸- *cascade08¸-Á-*cascade08Á-Ò- *cascade08Ò-Û-*cascade08Û-ì- *cascade08ì-õ-*cascade08õ-†. *cascade08†..*cascade08.². *cascade08².Ş/*cascade08Ş/¤0 *cascade08¤0Ã0Ã0Ù0 *cascade08Ù0÷0*cascade08÷0ğ1 *cascade08ğ1ò1*cascade08ò1ó1 *cascade08ó1ô1*cascade08ô1õ1 *cascade08õ1÷1*cascade08÷1ú1 *cascade08ú1ü1*cascade08ü1ı1 *cascade08ı1ş1*cascade08ş1€2 *cascade08€22*cascade082‚2 *cascade08‚2…2*cascade08…2‹2 *cascade08‹2Œ2*cascade08Œ22 *cascade082‘2*cascade08‘2“2 *cascade08“2”2*cascade08”2–2 *cascade08–2—2*cascade08—2˜2 *cascade08˜2™2*cascade08™2›2 *cascade08›2œ2*cascade08œ22 *cascade082Ÿ2*cascade08Ÿ2 2 *cascade08 2£2*cascade08£2¥2 *cascade08¥2«2*cascade08«2¬2 *cascade08¬2­2*cascade08­2®2 *cascade08®2°2*cascade08°2±2 *cascade08±2²2*cascade08²2³2 *cascade08³2´2*cascade08´2µ2 *cascade08µ2·2*cascade08·2Á2 *cascade08Á2Ö2*cascade08Ö2Ş2 *cascade08Ş2à2*cascade08à2á2 *cascade08á2ï2*cascade08ï2ğ2 *cascade08ğ2õ2*cascade08õ2ÿ2 *cascade08ÿ2˜3*cascade08˜3 3 *cascade08 3£3*cascade08£3¤3 *cascade08¤3ª3*cascade08ª3¬3 *cascade08¬3³3*cascade08³3´3 *cascade08´3¶3*cascade08¶3·3 *cascade08·3»3*cascade08»3½3 *cascade08½3¾3*cascade08¾3Ê3 *cascade08Ê3Í3*cascade08Í3Ï3 *cascade08Ï3Ğ3*cascade08Ğ3Ñ3 *cascade08Ñ3Ò3*cascade08Ò3Õ3 *cascade08Õ3Ö3*cascade08Ö3Ù3 *cascade08Ù3Ú3*cascade08Ú3ß3 *cascade08ß3á3*cascade08á3ë3 *cascade08ë3‚4*cascade08‚4†4*cascade08†4‡4 *cascade08‡4‰4*cascade08‰4Š4 *cascade08Š44*cascade084˜4 *cascade08˜4¬4*cascade08¬4¶4 *cascade08¶4»4*cascade08»4¼4 *cascade08¼4Å4*cascade08Å4Æ4 *cascade08Æ4Ç4*cascade08Ç4È4 *cascade08È4Ë4*cascade08Ë4Ì4 *cascade08Ì4Ï4*cascade08Ï4Ğ4 *cascade08Ğ4Ó4*cascade08Ó4Ô4 *cascade08Ô4æ4*cascade08æ4ç4 *cascade08ç4í4*cascade08í4÷4 *cascade08÷4ù4*cascade08ù4ú4 *cascade08ú4…5*cascade08…5†5 *cascade08†5‡5*cascade08‡5ˆ5 *cascade08ˆ55*cascade085‘5 *cascade08‘5•5*cascade08•5–5 *cascade08–5—5*cascade08—5˜5 *cascade08˜5š5*cascade08š5¢5 *cascade08¢5£5*cascade08£5Õ5 *cascade08Õ5Ö5*cascade08Ö5Ù5 *cascade08Ù5Û5*cascade08Û5Ü5 *cascade08Ü5ñ5ñ5õ5*cascade08õ5ö5 *cascade08ö5€6*cascade08€66 *cascade086„6*cascade08„6…6 *cascade08…6‰6*cascade08‰6Œ6 *cascade08Œ6 6*cascade08 6¡6 *cascade08¡6©6*cascade08©6«6 *cascade08«6·6*cascade08·6¸6 *cascade08¸6¹6*cascade08¹6¿6 *cascade08¿6Á6*cascade08Á6Ä6 *cascade08Ä6É6*cascade08É6Ê6 *cascade08Ê6Ë6*cascade08Ë6Ì6 *cascade08Ì6Î6*cascade08Î6Ñ6 *cascade08Ñ6Ò6*cascade08Ò6Ó6 *cascade08Ó6Ú6*cascade08Ú6Û6 *cascade08Û6â6*cascade08â6Ú7 *cascade08Ú7Û7*cascade08Û7ø7 *cascade08ø7²8*cascade08²8³8 *cascade08³8¹8 *cascade08¹8Î8*cascade08Î8„9„9Å9 *cascade08Å9Û9*cascade08Û9õ9 *cascade08õ9»:»:Á: *cascade08Á:Æ:Æ:È: *cascade08È:Ğ: *cascade08Ğ:Õ: *cascade08Õ:Ú: *cascade08Ú:ä: *cascade08ä:ì:ì:«; *cascade08«;¬;*cascade08¬;­; *cascade08­;®;*cascade08®;¯; *cascade08¯;²;*cascade08²;µ; *cascade08µ;¸;*cascade08¸;¹; *cascade08¹;½;*cascade08½;¿; *cascade08¿;À;*cascade08À;×; *cascade08×;Ú;*cascade08Ú;İ; *cascade08İ;ß;*cascade08ß;à; *cascade08à;ã;*cascade08ã;ä; *cascade08ä;ç;*cascade08ç;‡< *cascade08‡<–<*cascade08–<Ì< *cascade08Ì<Î<Î<Ò< *cascade08Ò<Ó<Ó<Ô< *cascade08Ô<Õ<Õ<Ö< *cascade08Ö<×<×<ñ< *cascade08ñ<ø<ø<Š= *cascade08Š=‹=‹=Œ= *cascade08Œ===¥= *cascade08¥=¨=¨=¬= *cascade08¬=­=­=¯= *cascade08¯=°=°=Ã= *cascade08Ã=Å=Å=Æ= *cascade08Æ=É=É=Ê= *cascade08Ê=Í=Í=å= *cascade08å=è=è=ğ= *cascade08ğ=ñ=ñ=ˆ> *cascade08ˆ>‰>‰>Š> *cascade08Š>Œ>Œ>> *cascade08>”>”>—> *cascade08—>š>š>Ÿ> *cascade08Ÿ>¥> *cascade08¥>´>´>ç> *cascade08ç>í>í>û> *cascade08û>ı>ı>ÿ> *cascade08ÿ>??ƒ? *cascade08ƒ?…?…?‘? *cascade08‘?’?’?“? *cascade08“?•?•?—? *cascade08—?š?š?›? *cascade08›???Ÿ? *cascade08Ÿ?¡?¡?¢? *cascade08¢?¤?¤?¥? *cascade08¥?¦?¦?§? *cascade08§?©?©?ª? *cascade08ª?«?«?®? *cascade08®?¯?¯?±? *cascade08±?²?²?Ä? *cascade08Ä?Å?Å?Î? *cascade08Î?Ò?Ò?Ô? *cascade08Ô?×?×?é? *cascade08é?ò?ò?ó? *cascade08ó?ô?ô?õ? *cascade08õ?÷?÷?ù? *cascade08ù?û?û?ı? *cascade08ı?ş?ş?ÿ? *cascade08ÿ?€@€@@ *cascade08@‚@‚@…@ *cascade08…@‡@‡@ˆ@ *cascade08ˆ@‰@‰@Š@ *cascade08Š@Œ@Œ@@ *cascade08@@@@ *cascade08@@@³@ *cascade08³@º@º@Ë@ *cascade08Ë@Ô@ *cascade08Ô@Û@Û@Ü@ *cascade08Ü@İ@İ@ß@ *cascade08ß@“A *cascade08“A”A”A•A *cascade08•A–A–AšA *cascade08šAAA±A *cascade08±A²A²A¼A *cascade08¼AÀAÀAêA *cascade08êAîAîAºB *cascade08ºB¾B¾BÏB *cascade08ÏBÓBÓB€C *cascade08€CCC‚C *cascade08‚CƒCƒC¾C *cascade08¾CÂCÂCŞC *cascade08ŞCßCßCàC *cascade08àCáCáC¦D *cascade08¦DªDªDÖD *cascade08ÖDÚDÚDìD *cascade08ìDíDíD‹E *cascade08‹EŒEŒEE *cascade08EEEE *cascade08E’E’E”E *cascade08”E–E–E¸E *cascade08¸EºEºEĞE *cascade08ĞEÑEÑEëE *cascade08ëEìEìEõE *cascade08õEöEöE÷E *cascade08÷EøEøEşE *cascade08şE•F•F–F *cascade08–FFF¡F *cascade08¡F¢F¢F¤F *cascade08¤F¥F¥F§F *cascade08§F¿F¿FĞF *cascade08ĞFÑFÑFÓF *cascade08ÓFÔFÔFÖF *cascade08ÖFèFèFíF *cascade08íFùFùFúF *cascade08úFûFûF‘G *cascade08‘G—G—G™G *cascade08™GšGšG¬G *cascade08¬G®G®G½G *cascade08½GÂGÂGÅG *cascade08ÅGÇGÇGÓG *cascade08ÓGÖGÖG×G *cascade08×GÚGÚGÛG *cascade08ÛGâGâGãG *cascade08ãGèGèGöG *cascade08öG÷G÷GøG *cascade08øGùGùGúG *cascade08úGşGşGÿG *cascade08ÿG€H€HH *cascade08H‚H‚HI *cascade08I¶I¶IëI *cascade08ëIïI*cascade08ïI—J *cascade08—JÁJ*cascade08ÁJÇJ *cascade08ÇJËJËJæJ *cascade08æJ‡K*cascade08‡KˆK *cascade08ˆKšK*cascade08šK¹K *cascade08¹K½K½KL *cascade08L…L…LL *cascade08LLL®L *cascade08®L±L±L¾L *cascade08¾LÂLÂLïL *cascade08ïLûL*cascade08ûLşL *cascade08şL€M€M M *cascade08 M¢M¢MµM *cascade08µM¹M¹M‡N *cascade08‡N‹N‹NäN *cascade08äNêN*cascade08êNöN *cascade08öNûN*cascade08ûNüN *cascade08üN„O*cascade08„OO *cascade08O“O*cascade08“O¹O *cascade08¹O½O½OÇO *cascade08ÇOËOËOƒP *cascade08ƒP‡P‡PP *cascade08P“P“PïP *cascade08ïPóPóPşP *cascade08şP‚Q‚Q¯Q *cascade08¯QµQ*cascade08µQ¸Q *cascade08¸QºQºQÚQ *cascade08ÚQÜQÜQñQ *cascade08ñQõQõQÅR *cascade08ÅRÉRÉR³S *cascade08³S¹S*cascade08¹SÅS *cascade08ÅSÊS*cascade08ÊSËS *cascade08ËSÓS*cascade08ÓSŞS *cascade08ŞSâS*cascade08âSˆT *cascade08ˆTŒTŒT–T *cascade08–TšTšTÒT *cascade08ÒTÖTÖTŞT *cascade08ŞTâTâT¦V *cascade08¦VªVªV¶V*cascade08¶V¸V *cascade08¸V¼V¼VóV *cascade08óV÷V÷VşV *cascade08şVÒYÒYîY *cascade08îYƒZ*cascade08ƒZœ[ *cascade08œ[Ÿ[*cascade08Ÿ[ı] *cascade08ı]^^ª_ *cascade08ª_Ñ_Ñ_‡` *cascade08‡`‹`*cascade08‹`³` *cascade08³`İ`*cascade08İ`ã` *cascade08ã`æ`æ`ş` *cascade08ş`ÿ`ÿ`‚a *cascade08‚a£a*cascade08£a¤a *cascade08¤aÅa*cascade08ÅaÌa *cascade08ÌaĞaĞaÎb *cascade08ÎbÏbÏbëb *cascade08ëbîbîb’c *cascade08’c–c*cascade08–c‚d *cascade08‚dˆd*cascade08ˆd”d *cascade08”d™d*cascade08™dšd *cascade08šd¢d*cascade08¢d­d *cascade08­d±d*cascade08±dÃd *cascade08ÃdÇdÇdƒe *cascade08ƒe‰e*cascade08‰eòe *cascade08òeøe*cascade08øe„f *cascade08„f‰f*cascade08‰fŠf *cascade08Šf’f*cascade08’ff *cascade08f¡f*cascade08¡fËf *cascade08ËfÏfÏf×f *cascade08×fØfØfğf *cascade08ğfófóf›g *cascade08›gŸgŸgÛg *cascade08Ûgíg*cascade08ígåh *cascade08åhëh*cascade08ëh÷h *cascade08÷hüh*cascade08ühıh *cascade08ıh…i*cascade08…ii *cascade08i”i*cascade08”iµi *cascade08µi¹i¹iÁi *cascade08ÁiÂiÂiÚi *cascade08Úiİiİi…j *cascade08…j‰j‰j¼j *cascade08¼jÅj*cascade08ÅjÎk *cascade08Îkúk*cascade08úkşk *cascade08şkl *cascade08l¢l¢l¬l *cascade08¬l­l­lÅl *cascade08ÅlÈlÈlêl *cascade08êlõl *cascade08õl‹m*cascade08‹mŒm *cascade08Œm˜m*cascade08˜m™m *cascade08™mÌm *cascade08ÌmĞmĞm÷m *cascade08÷møm *cascade08øm…n*cascade08…n†n *cascade08†n¹n *cascade08¹n½n½no *cascade08o›o *cascade08›oÆo *cascade08ÆoÊoÊo©p *cascade08©p­p­pÑp *cascade08ÑpÕpÕpİp *cascade08İpápáp‘q *cascade08‘q•q•qâq *cascade08âqæqæqøq *cascade08øqüqüqŸr *cascade08Ÿr r *cascade08 r®r *cascade08®r²r²rÖr *cascade08Ör×r *cascade08×rÜr*cascade08Ürİr *cascade08İràr*cascade08àrár *cascade08áršs *cascade08šssst *cascade08t’t *cascade08’tt *cascade08tŸt *cascade08Ÿt´t *cascade08´t¶t¶tÕt *cascade08ÕtÖt *cascade08ÖtÙt*cascade08ÙtÜt *cascade08ÜtŞtŞtôt *cascade08ôt¾u *cascade08¾uÂuÂuÉu *cascade08ÉuÛu*cascade08Ûuçu *cascade08çuèuèu„v *cascade08„v‡v‡vöv *cascade08övúvúv‚w *cascade08‚w†w†wèw *cascade08èwìw*cascade08ìwíw *cascade08íwîw*cascade08îwğw *cascade08ğwów*cascade08ówx *cascade08x”x*cascade08”x®x *cascade08®x¯x¯xËx *cascade08ËxÎxÎxÚx*cascade08ÚxÜx *cascade08Üxàxàx—y *cascade08—y›y›y¢y *cascade08¢yºyºyÖy *cascade08Öyôy*cascade08ôyñ{ *cascade08ñ{ô{*cascade08ô{œ| *cascade08œ|Ù|*cascade08Ù|} *cascade08}‘~*cascade08‘~™~ *cascade08™~š~*cascade08š~©~ *cascade08©~ª~*cascade08ª~Ú~ *cascade08Ú~¸*cascade08¸º *cascade08º¼ *cascade08¼À*cascade08ÀÊ *cascade08ÊË *cascade08ËÓ*cascade08ÓÔ *cascade08ÔÕ *cascade08ÕÙ*cascade08Ùì *cascade08ìí *cascade08íî*cascade08îï *cascade08ïÿ*cascade08ÿƒ€ *cascade08ƒ€„€*cascade08„€…€ *cascade08…€€*cascade08€€ *cascade08€›€*cascade08›€¢€ *cascade08¢€£€*cascade08£€Å€ *cascade08Å€õ€*cascade08õ€± *cascade08±Ù*cascade08Ù»‚ *cascade08
+»‚šƒšƒ£ƒ *cascade08
+£ƒ«ƒ«ƒäƒ *cascade08äƒòƒ *cascade08
+òƒúƒúƒÍ… *cascade08
+Í…Õ…Õ…Ø… *cascade08
+Ø…à…à…Œ† *cascade08
+Œ†††¯† *cascade08
+¯†´†´†ß† *cascade08
+ß†ç†ç†ğ† *cascade08
+ğ†ò†ò†–‡ *cascade08
+–‡œ‡œ‡±‡ *cascade08±‡Ä‡ *cascade08
+Ä‡Ì‡Ì‡•ˆ *cascade08•ˆ˜ˆ*cascade08˜ˆ¦ˆ *cascade08¦ˆ©ˆ*cascade08©ˆ¼ˆ *cascade08¼ˆÃˆ*cascade08ÃˆÅˆ *cascade08ÅˆÇˆ*cascade08Çˆâˆ *cascade08âˆæˆ*cascade08æˆ‡‰ *cascade08‡‰ˆ‰*cascade08ˆ‰‰‰ *cascade08‰‰Š‰*cascade08Š‰“‰ *cascade08
+“‰—‰—‰·‰ *cascade08
+·‰»‰»‰¾‰ *cascade08
+¾‰Æ‰Æ‰ê‰ *cascade08ê‰ì‰*cascade08ì‰Š *cascade08
+Š–Š–ŠŸŠ *cascade08
+ŸŠìŠìŠø‹ *cascade08ø‹ü‹ *cascade08
+ü‹—Œ—Œ¤ *cascade08
+¤ÊÊõ *cascade08
+õùùÕ *cascade08
+ÕÙÙ *cascade08
+……–‘ *cascade08
+–‘š‘š‘¢‘ *cascade08
+¢‘¦‘¦‘ó‘ *cascade08
+ó‘÷‘÷‘‘’ *cascade08
+‘’•’•’è’ *cascade08
+è’ì’ì’š“ *cascade08
+š“““Ì” *cascade08
+Ì”Ğ”Ğ”ö” *cascade08
+ö”ú”ú”ş” *cascade08
+ş”ÿ”ÿ”—• *cascade08
+—•š•š•¢• *cascade08
+¢•¦•¦•æ• *cascade08
+æ•ê•ê•ô– *cascade08
+ô–ø–ø–€— *cascade08
+€———¡— *cascade08
+¡—¤—¤—±— *cascade08
+±—µ—µ—ñ— *cascade08
+ñ—ó—ó—“˜ *cascade08
+“˜•˜•˜©˜ *cascade08
+©˜­˜­˜ü˜ *cascade08
+ü˜ş˜ş˜™ *cascade08
+™ ™ ™®š *cascade08
+®š²š²š¼š *cascade08
+¼šÀšÀšøš *cascade08
+øšüšüš„› *cascade08
+„›†›†›› *cascade08
+› › ›È› *cascade08
+È›Ì›Ì›Ğœ *cascade08
+ĞœÔœÔœÕœ *cascade08Õœ×œ*cascade08×œÙœ *cascade08ÙœŞœ*cascade08Şœâœ *cascade08
+âœæœæœ† *cascade08
+†ŠŠ‹ *cascade08‹*cascade08 *cascade08
+¡¡Á *cascade08
+ÁÂÂú *cascade08
+úşş‚ *cascade08
+‚…… *cascade08
+¦ *cascade08
+¦ªªê *cascade08
+êíí‰Ÿ *cascade08
+‰ŸŠŸŠŸˆ  *cascade08
+ˆ Œ Œ ”  *cascade08
+” ˜ ˜ æ  *cascade08
+æ ê ê ó  *cascade08
+ó ÷ ÷ Â¡ *cascade08
+Â¡Æ¡Æ¡İ¡ *cascade08
+İ¡á¡á¡Ó¢ *cascade08
+Ó¢×¢×¢ò¢ *cascade08
+ò¢ö¢ö¢®£ *cascade08
+®£²£²£¼£ *cascade08
+¼£À£À£„¥ *cascade08
+„¥ˆ¥ˆ¥Í¥ *cascade08
+Í¥Ñ¥Ñ¥Ü¥ *cascade08
+Ü¥İ¥İ¥õ¥ *cascade08
+õ¥ø¥ø¥£¦ *cascade08
+£¦§¦§¦°¦ *cascade08
+°¦±¦±¦Ñ¦ *cascade08
+Ñ¦Ô¦Ô¦ã¦ *cascade08
+ã¦ç¦ç¦™§ *cascade08
+™§š§š§¾§ *cascade08
+¾§Á§Á§Ô§ *cascade08
+Ô§Ø§Ø§¨ *cascade08
+¨‘¨‘¨µ¨ *cascade08
+µ¨·¨·¨Ë¨ *cascade08
+Ë¨Ï¨Ï¨‰© *cascade08
+‰©‹©‹©¯© *cascade08
+¯©±©±©ç© *cascade08
+ç©ë©ë©ï© *cascade08
+ï©ó©ó©²« *cascade08
+²«¶«¶«Ç« *cascade08
+Ç«É«É«å« *cascade08
+å«ç«ç«ò« *cascade08
+ò«ö«ö«¦¬ *cascade08
+¦¬ª¬ª¬±¬ *cascade08
+±¬Ò®Ò®Ï´ *cascade08Ï´Ï´*cascade08Ï´—µ *cascade08
+—µÊµÊµüµ *cascade08
+üµ€¶€¶¬· *cascade08
+¬·°·°·³¹ *cascade08
+³¹·¹·¹¼¹ *cascade08¼¹½¹ *cascade08
+½¹á¹á¹ñº *cascade08
+ñº»»›¼ *cascade08
+›¼Á¼Á¼ë½ *cascade08
+ë½ï½ï½ª¾ *cascade08
+ª¾­¾­¾Å¾ *cascade08
+Å¾Æ¾Æ¾î¾ *cascade08
+î¾ò¾ò¾‚À *cascade08
+‚À†À†ÀÀ *cascade08
+ÀÀÀ°À *cascade08
+°À²À²À¿À *cascade08
+¿ÀÃÀÃÀ Á *cascade08
+ Á¤Á¤Á¸Á *cascade08
+¸Á¹Á¹ÁÙÁ *cascade08
+ÙÁÜÁÜÁ‹Â *cascade08
+‹ÂÂÂ½Ã *cascade08
+½ÃÁÃÁÃËÃ *cascade08
+ËÃÏÃÏÃ‡Ä *cascade08
+‡Ä‹Ä‹Ä“Ä *cascade08
+“Ä–Ä–Ä®Ä *cascade08
+®Ä¯Ä¯Ä×Ä *cascade08
+×ÄÛÄÛÄäÅ *cascade08
+äÅèÅèÅğÅ *cascade08
+ğÅòÅòÅ’Æ *cascade08
+’Æ”Æ”Æ¡Æ *cascade08
+¡Æ¥Æ¥Æ˜Ç *cascade08
+˜ÇœÇœÇ®Ç *cascade08
+®Ç¯Ç¯ÇÏÇ *cascade08
+ÏÇÒÇÒÇÿÇ *cascade08
+ÿÇƒÈƒÈ±É *cascade08
+±ÉµÉµÉ¿É *cascade08
+¿ÉÃÉÃÉûÉ *cascade08
+ûÉÿÉÿÉ‡Ê *cascade08
+‡ÊŠÊŠÊ¢Ê *cascade08
+¢Ê£Ê£ÊÏË *cascade08
+ÏËÓËÓËáË *cascade08
+áËåËåËœÌ *cascade08
+œÌ Ì Ì§Ì *cascade08
+§ÌÆÌÆÌ¾Ñ *cascade08
+¾ÑñÑñÑ¡Ó *cascade08¡Ó¢Ó *cascade08
+¢ÓÆÓÆÓÔÔ *cascade08ÔÔñÔ *cascade082?file:///c:/Users/kouki/.gemini/hifuu-kou-club/app/admin/page.js
