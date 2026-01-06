@@ -1,17 +1,40 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useRef, useEffect, useState } from 'react'; // Re-order/fix imports if needed, but simplest to just modify existing
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Pencil } from 'lucide-react';
+import { Send, Pencil, Trash2, Edit2, Heart } from 'lucide-react';
+import { useSession } from "next-auth/react";
+import EmaLikeButton from './EmaLikeButton';
 
 export default function EmaSection() {
+    const { data: session } = useSession();
     const [messages, setMessages] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [newMessage, setNewMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [myEmas, setMyEmas] = useState({}); // { id: secret_key }
+    const [likedEmas, setLikedEmas] = useState({}); // { id: true }
+    const [editingId, setEditingId] = useState(null); // ID of message currently being edited
 
     useEffect(() => {
         fetchMessages();
+        // Load secret keys from local storage
+        const stored = localStorage.getItem('hifuu_ema_keys');
+        if (stored) {
+            try {
+                setMyEmas(JSON.parse(stored));
+            } catch (e) {
+                console.error("Failed to parse ema keys", e);
+            }
+        }
+
+        // Load liked status
+        const storedLikes = localStorage.getItem('hifuu_ema_likes');
+        if (storedLikes) {
+            try {
+                setLikedEmas(JSON.parse(storedLikes));
+            } catch (e) { console.error(e); }
+        }
     }, []);
 
     const fetchMessages = async () => {
@@ -28,24 +51,131 @@ export default function EmaSection() {
 
         setIsSubmitting(true);
         try {
-            const res = await fetch('/api/ema', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: newMessage })
-            });
+            if (editingId) {
+                // UPDATE
+                const key = myEmas[editingId];
+                const res = await fetch('/api/ema', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: editingId,
+                        content: newMessage,
+                        key: key // Pass key if it exists (guest), API checks session/key
+                    })
+                });
 
-            if (res.ok) {
-                setNewMessage("");
-                setIsOpen(false);
-                fetchMessages(); // Refresh list
+                if (res.ok) {
+                    setNewMessage("");
+                    setIsOpen(false);
+                    setEditingId(null);
+                    fetchMessages();
+                } else {
+                    alert("更新に失敗しました");
+                }
             } else {
-                alert("送信に失敗しました");
+                // CREATE
+                const res = await fetch('/api/ema', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: newMessage })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // Save secret key if returned
+                    if (data.secret_key) {
+                        const newKeys = { ...myEmas, [data.id]: data.secret_key };
+                        setMyEmas(newKeys);
+                        localStorage.setItem('hifuu_ema_keys', JSON.stringify(newKeys));
+                    }
+
+                    setNewMessage("");
+                    setIsOpen(false);
+                    fetchMessages();
+                } else {
+                    alert("送信に失敗しました");
+                }
             }
         } catch (error) {
             console.error(error);
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleDelete = async () => {
+        if (!editingId) return;
+        if (!confirm("本当にこの絵馬を取り外しますか？")) return;
+
+        const key = myEmas[editingId];
+        try {
+            const res = await fetch(`/api/ema?id=${editingId}&key=${key || ''}`, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                // Remove from local storage if exists
+                if (myEmas[editingId]) {
+                    const newKeys = { ...myEmas };
+                    delete newKeys[editingId];
+                    setMyEmas(newKeys);
+                    localStorage.setItem('hifuu_ema_keys', JSON.stringify(newKeys));
+                }
+
+                // Close modal and refresh
+                closeModal();
+                fetchMessages();
+            } else {
+                alert("削除に失敗しました（権限がありません）");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("エラーが発生しました");
+        }
+    };
+
+    const startEdit = (msg) => {
+        setNewMessage(msg.content);
+        setEditingId(msg.id);
+        setIsOpen(true);
+    };
+
+    const handleLike = async (id) => {
+        const isLiked = !!likedEmas[id];
+        const newLikeStatus = !isLiked;
+        const diff = newLikeStatus ? 1 : -1;
+
+        // Optimistic update
+        setMessages(prev => prev.map(m =>
+            m.id === id ? { ...m, likes: Math.max(0, (m.likes || 0) + diff) } : m
+        ));
+
+        const newLikes = { ...likedEmas };
+        if (newLikeStatus) {
+            newLikes[id] = true;
+        } else {
+            delete newLikes[id];
+        }
+        setLikedEmas(newLikes);
+        localStorage.setItem('hifuu_ema_likes', JSON.stringify(newLikes));
+
+        try {
+            await fetch('/api/ema/like', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, increment: newLikeStatus })
+            });
+        } catch (error) {
+            console.error("Failed to toggle like", error);
+            // Revert logic could be added here
+        }
+    };
+
+    const closeModal = () => {
+        setIsOpen(false);
+        setNewMessage("");
+        setEditingId(null);
     };
 
     return (
@@ -162,6 +292,39 @@ export default function EmaSection() {
                             }}>
                                 {msg.content}
                             </div>
+
+                            {/* Like Button */}
+                            {/* Like Button */}
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '10px',
+                                left: '10px',
+                            }}>
+                                <EmaLikeButton
+                                    isLiked={!!likedEmas[msg.id]}
+                                    count={msg.likes}
+                                    onLike={() => handleLike(msg.id)}
+                                />
+                            </div>
+
+                            {/* Edit/Delete Controls */}
+                            {(session || myEmas[msg.id]) && (
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: '5px',
+                                    right: '5px',
+                                    display: 'flex',
+                                    gap: '5px'
+                                }}>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); startEdit(msg); }}
+                                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5d4037', padding: '2px' }}
+                                        title="編集"
+                                    >
+                                        <Edit2 size={16} />
+                                    </button>
+                                </div>
+                            )}
                         </motion.div>
                     ))}
 
@@ -198,7 +361,8 @@ export default function EmaSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={() => setIsOpen(false)}
+
+                        onClick={closeModal}
                         style={{
                             position: 'fixed',
                             top: 0,
@@ -247,39 +411,66 @@ export default function EmaSection() {
                                         fontFamily: 'var(--font-serif)'
                                     }}
                                 />
-                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsOpen(false)}
-                                        style={{
-                                            padding: '0.5rem 1.5rem',
-                                            borderRadius: '0.5rem',
-                                            border: 'none',
-                                            background: '#f3f4f6',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        キャンセル
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        style={{
-                                            padding: '0.5rem 1.5rem',
-                                            borderRadius: '0.5rem',
-                                            border: 'none',
-                                            background: 'var(--hakurei-red)',
-                                            color: '#fff',
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '0.5rem',
-                                            opacity: isSubmitting ? 0.7 : 1
-                                        }}
-                                    >
-                                        <Send size={16} />
-                                        奉納する
-                                    </button>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+                                    {/* Delete Button (Only when editing) */}
+                                    {editingId ? (
+                                        <button
+                                            type="button"
+                                            onClick={handleDelete}
+                                            style={{
+                                                padding: '0.5rem 1rem',
+                                                borderRadius: '0.5rem',
+                                                border: '1px solid #d32f2f',
+                                                background: 'transparent',
+                                                color: '#d32f2f',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.4rem',
+                                                fontSize: '0.9rem'
+                                            }}
+                                        >
+                                            <Trash2 size={14} />
+                                            削除
+                                        </button>
+                                    ) : (
+                                        <div></div> // Spacer
+                                    )}
+
+                                    <div style={{ display: 'flex', gap: '1rem' }}>
+                                        <button
+                                            type="button"
+                                            onClick={closeModal}
+                                            style={{
+                                                padding: '0.5rem 1.5rem',
+                                                borderRadius: '0.5rem',
+                                                border: 'none',
+                                                background: '#f3f4f6',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            キャンセル
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            style={{
+                                                padding: '0.5rem 1.5rem',
+                                                borderRadius: '0.5rem',
+                                                border: 'none',
+                                                background: 'var(--hakurei-red)',
+                                                color: '#fff',
+                                                cursor: 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                opacity: isSubmitting ? 0.7 : 1
+                                            }}
+                                        >
+                                            <Send size={16} />
+                                            {editingId ? "更新する" : "奉納する"}
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </motion.div>

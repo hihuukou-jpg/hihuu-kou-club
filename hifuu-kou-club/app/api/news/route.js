@@ -1,14 +1,23 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { supabase } from '../../../lib/supabase';
+import { supabase, supabaseAdmin } from '../../../lib/supabase';
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const { data, error } = await supabase
+        const { searchParams } = new URL(request.url);
+        const theme = searchParams.get('theme');
+
+        let query = supabase
             .from('news')
             .select('*')
             .order('created_at', { ascending: false });
+
+        if (theme) {
+            query = query.in('theme', [theme, 'both']);
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
 
@@ -27,13 +36,15 @@ export async function POST(request) {
     try {
         const body = await request.json();
         const date = new Date().toISOString().split('T')[0].replace(/-/g, '.');
+        const theme = body.theme || 'both';
 
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from('news')
             .insert({
                 date: date,
                 title: body.title,
-                content: body.content
+                content: body.content,
+                theme: theme
             });
 
         if (error) throw error;

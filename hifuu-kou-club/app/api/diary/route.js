@@ -1,19 +1,28 @@
-
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { supabase } from '../../../lib/supabase';
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const { data, error } = await supabase
+        const { searchParams } = new URL(request.url);
+        const theme = searchParams.get('theme');
+
+        let query = supabase
             .from('diary')
             .select('*')
             .order('created_at', { ascending: false });
 
+        if (theme) {
+            query = query.in('theme', [theme, 'both']);
+        }
+
+        const { data, error } = await query;
+
         if (error) throw error;
         return NextResponse.json(data);
     } catch (error) {
+        console.error("Diary GET Error:", error);
         return NextResponse.json({ error: 'Failed to load diary' }, { status: 500 });
     }
 }
@@ -31,7 +40,8 @@ export async function POST(request) {
             date: body.date,
             title: body.title,
             content: body.content,
-            progress: body.progress
+            progress: body.progress,
+            theme: body.theme || 'both'
         };
 
         let result;
@@ -76,7 +86,8 @@ export async function DELETE(request) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.error("Diary DELETE Error:", error);
         return NextResponse.json({ error: 'Failed to delete diary' }, { status: 500 });
     }
 }
-
+// End of file

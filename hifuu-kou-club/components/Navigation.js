@@ -3,16 +3,19 @@
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useTheme } from './ThemeContext';
+import { Ghost, Sparkles } from 'lucide-react';
 
 const navItems = [
     { name: 'HOME', id: 'hero' },
     { name: 'NEWS', id: 'news' },
     { name: 'CONTENT', id: 'videos' },
-    { name: 'CHARACTERS', id: 'characters' },
+    { name: 'ILLUSTRATIONS', id: 'illustrations' },
     { name: 'DIARY', id: 'diary' },
 ];
 
 export default function Navigation() {
+    const { theme, toggleTheme } = useTheme();
     const [isMobile, setIsMobile] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -77,28 +80,20 @@ export default function Navigation() {
         >
             {/* Logo Area */}
             <Link href="/#hero" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                <div style={{
-                    width: isMobile ? '32px' : '40px',
-                    height: isMobile ? '32px' : '40px',
-                    background: 'var(--hakurei-red)',
-                    borderRadius: '2px', // Sharper corners for HSR feel
-                    display: 'grid', placeItems: 'center',
-                    transform: 'rotate(45deg)', // Diamond shape
-                    boxShadow: '0 0 10px var(--hakurei-red)'
-                }}>
-                    <div style={{ width: '60%', height: '60%', background: '#fff', transform: 'rotate(-45deg)', clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }}></div>
-                </div>
-                <span style={{
-                    fontFamily: 'var(--font-serif)',
-                    fontSize: isMobile ? '1.1rem' : '1.3rem',
-                    fontWeight: 'bold',
-                    color: '#fff', // Always white for contrast on Hero/Dark header
-                    letterSpacing: '0.1em',
-                    whiteSpace: 'nowrap',
-                    textShadow: '0 0 5px rgba(0,0,0,0.5)'
-                }}>
-                    秘封工倶楽部
-                </span>
+                <motion.img
+                    src="/logo.png"
+                    alt="秘封工倶楽部 Logo"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    style={{
+                        height: isMobile ? '40px' : (scrolled ? '40px' : '60px'),
+                        width: 'auto',
+                        objectFit: 'contain',
+                        filter: theme === 'ura' ? 'drop-shadow(0 0 5px #ff0000)' : 'drop-shadow(0 0 5px rgba(255,255,255,0.5))',
+                        transition: 'all 0.3s ease'
+                    }}
+                />
             </Link>
 
             {/* Desktop Nav */}
@@ -125,6 +120,30 @@ export default function Navigation() {
                             </Link>
                         </li>
                     ))}
+                    <li>
+                        <button
+                            onClick={toggleTheme}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                borderRadius: '20px',
+                                padding: '0.3rem 0.8rem',
+                                color: '#fff',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--hsr-cyan)'}
+                            onMouseOut={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'}
+                        >
+                            {theme === 'omote' ? <Sparkles size={14} /> : <Ghost size={14} />}
+                            <span style={{ fontSize: '0.8rem', fontFamily: 'var(--font-serif)' }}>
+                                {theme === 'omote' ? '表' : '裏'}
+                            </span>
+                        </button>
+                    </li>
                     <li>
                         <Link
                             href="/admin"
@@ -204,17 +223,38 @@ export default function Navigation() {
                             right: 0,
                             width: '80%',
                             height: '100vh',
-                            background: 'rgba(15, 23, 42, 0.95)', // Deep Space Blue
+                            background: theme === 'ura' ? 'rgba(20, 0, 0, 0.95)' : 'rgba(15, 23, 42, 0.95)', // Red-Black for Ura, Deep Space for Omote
                             backdropFilter: 'blur(15px)',
-                            borderLeft: '1px solid rgba(255,255,255,0.1)',
+                            borderLeft: theme === 'ura' ? '1px solid #ff0000' : '1px solid rgba(255,255,255,0.1)',
                             padding: '6rem 2rem',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'flex-start',
                             gap: '2rem',
-                            zIndex: 100
+                            zIndex: 100,
+                            boxShadow: theme === 'ura' ? '-5px 0 20px rgba(255, 0, 0, 0.3)' : 'none'
                         }}
                     >
+                        <button
+                            onClick={() => { toggleTheme(); setIsOpen(false); }}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                borderRadius: '20px',
+                                padding: '0.5rem 1rem',
+                                color: '#fff',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                cursor: 'pointer',
+                                width: 'fit-content'
+                            }}
+                        >
+                            {theme === 'omote' ? <Sparkles size={16} /> : <Ghost size={16} />}
+                            <span style={{ fontSize: '1rem', fontFamily: 'var(--font-serif)' }}>
+                                {theme === 'omote' ? '世界反転' : '現実回帰'}
+                            </span>
+                        </button>
                         {navItems.map((item) => (
                             <Link
                                 key={item.name}
@@ -224,9 +264,10 @@ export default function Navigation() {
                                     fontSize: '1.2rem',
                                     fontFamily: 'var(--font-sans)',
                                     fontWeight: 'bold',
-                                    color: '#fff',
+                                    color: theme === 'ura' ? '#ff0000' : '#fff',
+                                    textShadow: theme === 'ura' ? '0 0 5px rgba(255,0,0,0.5)' : 'none',
                                     textDecoration: 'none',
-                                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                                    borderBottom: theme === 'ura' ? '1px solid rgba(255,0,0,0.3)' : '1px solid rgba(255,255,255,0.1)',
                                     width: '100%',
                                     paddingBottom: '0.5rem'
                                 }}

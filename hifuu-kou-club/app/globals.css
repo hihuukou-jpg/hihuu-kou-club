@@ -45,6 +45,52 @@
   --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+[data-theme='ura'] {
+  --hakurei-white: #050505;
+  /* Blacker */
+  --text-main: #f1f5f9;
+  --hakurei-red: #ff003c;
+  /* Cyberpunk Red */
+  --sakura-pink: #2d004d;
+  --sumi-black: #e2e8f0;
+
+  /* Chaos Overrides */
+  --spirit-gold: #ffff00;
+  /* Danger Yellow */
+  --winter-navy: #ff00ff;
+  /* Magenta */
+}
+
+/* Ura Mode Body Effects */
+[data-theme='ura'] body {
+  background-color: #000 !important;
+  background-image:
+    repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      #ff003c 2px,
+      #ff003c 4px);
+  background-size: 100% 4px;
+  animation: scanline 10s linear infinite;
+}
+
+[data-theme='ura'] h1,
+[data-theme='ura'] h2,
+[data-theme='ura'] h3 {
+  text-shadow: 2px 2px 0px #ff00ff, -2px -2px 0px #00ffff;
+  letter-spacing: 0.1em;
+}
+
+@keyframes scanline {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 100%;
+  }
+}
+
 /* HSR Utility Classes */
 .hsr-glass {
   background: rgba(255, 255, 255, 0.05);

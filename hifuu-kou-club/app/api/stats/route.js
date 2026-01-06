@@ -10,14 +10,23 @@ export async function GET() {
             .eq('id', 1)
             .single();
 
-        if (error) {
-            // If table doesn't exist or empty, return 0
-            return NextResponse.json({ views: 0 });
+        let views = 0;
+        if (!error && data) {
+            views = data.views;
         }
 
-        return NextResponse.json({ views: data?.views || 0 });
+        // Fetch storage usage
+        const { data: storageData, error: storageError } = await supabase
+            .rpc('get_storage_usage');
+
+        let storageSize = 0;
+        if (!storageError) {
+            storageSize = storageData;
+        }
+
+        return NextResponse.json({ views, storage: storageSize });
     } catch (err) {
-        return NextResponse.json({ views: 0 }, { status: 500 });
+        return NextResponse.json({ views: 0, storage: 0 }, { status: 500 });
     }
 }
 

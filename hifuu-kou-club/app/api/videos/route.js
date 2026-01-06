@@ -3,12 +3,21 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { supabase } from '../../../lib/supabase';
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const { data, error } = await supabase
+        const { searchParams } = new URL(request.url);
+        const theme = searchParams.get('theme');
+
+        let query = supabase
             .from('videos')
             .select('*')
             .order('created_at', { ascending: false });
+
+        if (theme) {
+            query = query.in('theme', [theme, 'both']);
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
         return NextResponse.json(data);
@@ -30,7 +39,8 @@ export async function POST(request) {
             .from('videos')
             .insert({
                 title: body.title,
-                url: body.url
+                url: body.url,
+                theme: body.theme || 'both'
             });
 
         if (error) throw error;
