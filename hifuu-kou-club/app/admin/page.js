@@ -344,6 +344,9 @@ export default function AdminPage() {
                                     fontSize: "0.9rem",
                                     fontWeight: "bold"
                                 }}>
+                                    <span style={{ marginRight: "1rem" }}>
+                                        総訪問者数: {stats.views}人
+                                    </span>
                                     {(() => {
                                         const MAX_STORAGE = 1024 * 1024 * 1024; // 1GB for Free Tier
                                         const percent = Math.min(100, (stats.storage / MAX_STORAGE) * 100).toFixed(1);
