@@ -33,25 +33,76 @@ export async function POST(request) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (!supabaseAdmin) {
+        return NextResponse.json({ error: 'Server configuration error: Missing Service Role Key' }, { status: 503 });
+    }
+
     try {
         const body = await request.json();
-        const date = new Date().toISOString().split('T')[0].replace(/-/g, '.');
-        const theme = body.theme || 'both';
 
+        const theme = body.theme || 'both';
+        const date = body.date || new Date().toISOString().split('T')[0].replace(/-/g, '.');
+
+        let result;
+        if (body.id) {
+            // Update
+            result = await supabaseAdmin
+                .from('news')
+                .update({
+                    title: body.title,
+                    content: body.content,
+                    theme: theme,
+                })
+                .eq('id', body.id);
+        } else {
+            // Insert
+            result = await supabaseAdmin
+                .from('news')
+                .insert({
+                    date: date,
+                    title: body.title,
+                    content: body.content,
+                    theme: theme
+                });
+        }
+
+        if (result.error) throw result.error;
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: 'Failed to save news' }, { status: 500 });
+    }
+}
+
+export async function DELETE(request) {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!supabaseAdmin) {
+        return NextResponse.json({ error: 'Server configuration error: Missing Service Role Key' }, { status: 503 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+        return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
+    try {
         const { error } = await supabaseAdmin
             .from('news')
-            .insert({
-                date: date,
-                title: body.title,
-                content: body.content,
-                theme: theme
-            });
+            .delete()
+            .eq('id', id);
 
         if (error) throw error;
 
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: 'Failed to save news' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to delete news' }, { status: 500 });
     }
 }

@@ -27,10 +27,11 @@ export default function VideoSection() {
     return (
         <section id="videos" style={{
             position: 'relative',
-            background: '#F8FAFC',
-            color: '#333',
+            background: 'var(--hakurei-white)',
+            color: 'var(--text-main)',
             padding: '8rem 2rem',
-            fontFamily: 'var(--font-serif)'
+            fontFamily: 'var(--font-serif)',
+            transition: 'background-color 0.3s ease, color 0.3s ease'
         }}>
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <motion.div
@@ -53,7 +54,7 @@ export default function VideoSection() {
                     >
                         CONTENT
                     </h2>
-                    <p style={{ color: '#64748b', marginTop: '1rem' }}>秘封工倶楽部の制作物・動画アーカイブ</p>
+                    <p style={{ color: 'var(--text-dim)', marginTop: '1rem' }}>秘封工倶楽部の制作物・動画アーカイブ</p>
                 </motion.div>
 
                 <div style={{
@@ -69,25 +70,29 @@ export default function VideoSection() {
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                                className="video-card"
+                                className="video-card hsr-glass"
                                 onClick={() => setSelectedVideoId(videoId)}
                                 style={{
                                     cursor: 'pointer',
                                     borderRadius: '12px',
                                     overflow: 'hidden',
-                                    background: '#fff',
+                                    // background: 'background is handled by hsr-glass class or variable',
+                                    // But hsr-glass has transparency. Let's use a solid/semi-solid that adapts
+                                    background: 'var(--hakurei-white)',
+                                    border: '1px solid var(--text-dim)',
                                     boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
                                     transition: 'all 0.3s ease',
                                     position: 'relative',
-                                    group: 'test' // dummy
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-5px)';
                                     e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                                    e.currentTarget.style.borderColor = 'var(--hakurei-red)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)';
+                                    e.currentTarget.style.borderColor = 'var(--text-dim)';
                                 }}
                             >
                                 {/* Thumbnail Container */}
@@ -146,7 +151,7 @@ export default function VideoSection() {
                                         fontFamily: 'var(--font-sans)',
                                         lineHeight: 1.4,
                                         marginBottom: '0.5rem',
-                                        color: '#1e293b'
+                                        color: 'var(--text-main)'
                                     }}>
                                         {video.title}
                                     </h3>

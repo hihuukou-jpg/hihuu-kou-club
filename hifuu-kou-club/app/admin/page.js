@@ -5,6 +5,76 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import DiaryEditor from "../../components/DiaryEditor";
 
+// Styled Components / Reusable Styles via Objects
+const styles = {
+    container: {
+        padding: "2rem",
+        paddingTop: "120px",
+        minHeight: "100vh",
+        position: "relative",
+        zIndex: 10,
+        // Using CSS variables for dynamic theme support
+        backgroundColor: "var(--hakurei-white)",
+        color: "var(--text-main)",
+        fontFamily: "var(--font-serif)",
+    },
+    card: {
+        background: "rgba(255, 255, 255, 0.05)", // Glass-like effect mostly transparent to show theme but legible
+        backdropFilter: "blur(10px)",
+        padding: "2rem",
+        marginBottom: "3rem",
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        border: "1px solid var(--text-dim)",
+        borderRadius: "8px"
+    },
+    input: {
+        width: "100%",
+        padding: "0.8rem",
+        background: "rgba(0,0,0,0.05)",
+        border: "1px solid var(--text-dim)",
+        color: "var(--text-main)",
+        borderRadius: "4px",
+    },
+    buttonPrimary: {
+        padding: "0.8rem 2rem",
+        background: "var(--hakurei-red)",
+        border: "none",
+        color: "white",
+        cursor: "pointer",
+        borderRadius: "4px",
+        fontWeight: "bold"
+    },
+    buttonSecondary: {
+        padding: "0.8rem 2rem",
+        background: "transparent",
+        border: "1px solid var(--text-dim)",
+        color: "var(--text-main)",
+        cursor: "pointer",
+        marginLeft: "1rem",
+        borderRadius: "4px"
+    },
+    tabButton: (isActive) => ({
+        padding: "1rem",
+        background: "transparent",
+        border: "none",
+        color: isActive ? "var(--hakurei-red)" : "var(--text-dim)",
+        borderBottom: isActive ? "2px solid var(--hakurei-red)" : "none",
+        cursor: "pointer",
+        fontSize: "1.1rem",
+        marginRight: "1rem",
+        fontWeight: isActive ? "bold" : "normal"
+    }),
+    statsBox: {
+        padding: "0.5rem 1rem",
+        background: "rgba(30, 58, 138, 0.1)", // Light blue tint
+        color: "var(--text-main)",
+        borderRadius: "4px",
+        border: "1px solid var(--winter-navy)",
+        fontSize: "0.9rem",
+        fontWeight: "bold"
+    }
+};
+
 export default function AdminPage() {
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState("news");
@@ -24,6 +94,7 @@ export default function AdminPage() {
     };
 
     // News Form
+    const [newsId, setNewsId] = useState(null);
     const [newsTitle, setNewsTitle] = useState("");
     const [newsContent, setNewsContent] = useState("");
     const [newsTheme, setNewsTheme] = useState("both");
@@ -64,43 +135,67 @@ export default function AdminPage() {
     }, []);
 
     const fetchData = async () => {
-        const n = await fetch("/api/news").then(res => res.json());
-        const c = await fetch("/api/characters").then(res => res.json());
-        const d = await fetch("/api/diary").then(res => res.json());
-        const v = await fetch("/api/videos").then(res => res.json());
-        // For admin, we want to see ALL illustrations, so maybe pass a special flag or just handle 'both' manually?
-        // Actually the API filters by 'theme'. If we want all, we might need to fetch twice or update API.
-        // For now let's fetch 'both' which logically implies we want everything, or we just fetch 'omote' and 'ura' separately?
-        // The current API: if theme is provided, filters. If NOT provided, does it return all? 
-        // Let's check api/illustrations/route.js. It seems if theme is empty, it returns all.
-        const i = await fetch("/api/illustrations").then(res => res.json());
-
-        // Only fetch stats if logged in (or just fetch and hide if not, but purely safe is conditional)
-        // For simplicity, fetch always, hide in UI. 
-        // Or catch error nicely.
         try {
-            const s = await fetch("/api/stats").then(res => res.json());
-            setStats(s);
-        } catch (e) { console.error(e); }
+            const [n, c, d, v, i] = await Promise.all([
+                fetch("/api/news").then(res => res.json()),
+                fetch("/api/characters").then(res => res.json()),
+                fetch("/api/diary").then(res => res.json()),
+                fetch("/api/videos").then(res => res.json()),
+                fetch("/api/illustrations").then(res => res.json())
+            ]);
 
-        setNews(n);
-        setChars(c);
-        setDiary(d);
-        setVideos(v);
-        if (Array.isArray(i)) setIllustrations(i);
+            setNews(n || []);
+            setChars(c || []);
+            setDiary(d || []);
+            setVideos(v || []);
+            if (Array.isArray(i)) setIllustrations(i);
+
+            // Stats
+            const s = await fetch("/api/stats").then(res => res.json().catch(() => ({ views: 0, storage: 0 })));
+            setStats(s);
+        } catch (e) {
+            console.error("Fetch error:", e);
+        }
     };
 
     const handleAddNews = async (e) => {
         e.preventDefault();
-        if (!session) return; // double check
-        await fetch("/api/news", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: newsTitle, content: newsContent, theme: newsTheme })
-        });
-        setNewsTitle("");
-        setNewsContent("");
-        setNewsTheme("both");
+        if (!session) return;
+        try {
+            const res = await fetch("/api/news", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: newsId,
+                    title: newsTitle,
+                    content: newsContent,
+                    theme: newsTheme
+                })
+            });
+            if (!res.ok) throw new Error("Failed");
+
+            setNewsId(null);
+            setNewsTitle("");
+            setNewsContent("");
+            setNewsTheme("both");
+            fetchData();
+        } catch (e) {
+            alert("投稿に失敗しました");
+        }
+    };
+
+    const handleEditNews = (item) => {
+        setNewsId(item.id);
+        setNewsTitle(item.title);
+        setNewsContent(item.content);
+        setNewsTheme(item.theme || "both");
+        window.scrollTo(0, 0);
+    };
+
+    const handleDeleteNews = async (id) => {
+        if (!session) return;
+        if (!confirm("本当に削除しますか？")) return;
+        await fetch(`/api/news?id=${id}`, { method: "DELETE" });
         fetchData();
     };
 
@@ -175,15 +270,8 @@ export default function AdminPage() {
     };
 
     const handleDeleteIllustration = async (id) => {
-        // API needs to support delete... assuming it does or I might need to add it?
-        // Illustration API currently might only support GET/POST. I should check.
-        // If not, I'll need to update it.
-        // For now let's implement the UI and assuming I'll fix the API if needed.
         if (!session) return;
         if (!confirm("本当に削除しますか？")) return;
-
-        // Check if API supports DELETE. Usually standard.
-        // If not, simply nothing happens.
         await fetch(`/api/illustrations?id=${id}`, { method: "DELETE" });
         fetchData();
     };
@@ -299,7 +387,6 @@ export default function AdminPage() {
         fetchData();
     };
 
-    // Helper to edit existing char
     const handleEditChar = (char) => {
         setCharId(char.id);
         setCharName(char.name);
@@ -313,37 +400,27 @@ export default function AdminPage() {
     };
 
     return (
-        <div style={{ padding: "2rem", paddingTop: "120px", color: "var(--text-main)", background: "var(--hakurei-white)", minHeight: "100vh", fontFamily: "var(--font-serif)", position: "relative", zIndex: 10 }}>
-            {/* Override global Ura effects for Admin */}
+        <div style={styles.container}>
+            {/* 
+               Remove global override that disabled animation, allowing standard theming.
+               We keep specific overrides only if necessary for legibility.
+            */}
             <style jsx global>{`
-                [data-theme='ura'] body {
-                    animation: none !important;
-                    background-image: none !important;
-                }
-                /* Reset h1, h2, h3 text shadows/colors for admin content wrapper */
-                [data-theme='ura'] .admin-content h1,
-                [data-theme='ura'] .admin-content h2,
-                [data-theme='ura'] .admin-content h3 {
-                    text-shadow: none !important;
-                    color: initial !important; 
-                    letter-spacing: normal !important;
+                /* Ensure admin content is readable on dark backgrounds */
+                [data-theme='ura'] .admin-content textarea,
+                [data-theme='ura'] .admin-content input[type="text"] {
+                    background: rgba(0,0,0,0.5);
+                    color: white;
                 }
             `}</style>
-            <div className="admin-content">
+
+            <div className="admin-content" style={{ maxWidth: "1200px", margin: "0 auto" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                     <h1 style={{ fontSize: "2rem", color: "var(--hakurei-red)" }}>管理ダッシュボード {session ? "(編集モード)" : "(閲覧モード)"}</h1>
                     <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
                         {session ? (
                             <>
-                                <div style={{
-                                    padding: "0.5rem 1rem",
-                                    background: "#E0F2FE",
-                                    color: "#0F172A",
-                                    borderRadius: "4px",
-                                    border: "1px solid #BAE6FD",
-                                    fontSize: "0.9rem",
-                                    fontWeight: "bold"
-                                }}>
+                                <div style={styles.statsBox}>
                                     <span style={{ marginRight: "1rem" }}>
                                         総訪問者数: {stats.views}人
                                     </span>
@@ -359,29 +436,20 @@ export default function AdminPage() {
                                     })()}
                                 </div>
                                 <span>Login: {session.user.name}</span>
-                                <button onClick={() => signOut()} style={{ padding: "0.5rem 1rem", border: "1px solid #ccc", background: "white", cursor: "pointer" }}>ログアウト</button>
+                                <button onClick={() => signOut()} style={{ ...styles.buttonSecondary, background: "var(--hakurei-white)" }}>ログアウト</button>
                             </>
                         ) : (
-                            <button onClick={() => signIn()} style={{ padding: "0.5rem 1rem", border: "none", background: "var(--hakurei-red)", color: "white", cursor: "pointer", borderRadius: "4px" }}>管理者ログイン</button>
+                            <button onClick={() => signIn()} style={styles.buttonPrimary}>管理者ログイン</button>
                         )}
                     </div>
                 </div>
 
-                <div style={{ marginBottom: "2rem", borderBottom: "1px solid #ccc" }}>
+                <div style={{ marginBottom: "2rem", borderBottom: "1px solid var(--text-dim)" }}>
                     {["news", "chars", "diary", "videos", "illustrations"].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            style={{
-                                padding: "1rem",
-                                background: "transparent",
-                                border: "none",
-                                color: activeTab === tab ? "var(--hakurei-red)" : "#888",
-                                borderBottom: activeTab === tab ? "2px solid var(--hakurei-red)" : "none",
-                                cursor: "pointer",
-                                fontSize: "1.2rem",
-                                marginRight: "1rem"
-                            }}
+                            style={styles.tabButton(activeTab === tab)}
                         >
                             {tab === "news" ? "お知らせ管理" : tab === "chars" ? "キャラクター管理" : tab === "diary" ? "活動日誌管理" : tab === "videos" ? "動画管理" : "イラスト管理"}
                         </button>
@@ -394,7 +462,7 @@ export default function AdminPage() {
                 {activeTab === "news" && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         {session ? (
-                            <form onSubmit={handleAddNews} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <form onSubmit={handleAddNews} style={styles.card}>
                                 <h3 style={{ marginBottom: "1rem" }}>お知らせ投稿</h3>
                                 <div style={{ marginBottom: "1rem" }}>
                                     <input
@@ -402,7 +470,7 @@ export default function AdminPage() {
                                         placeholder="タイトル"
                                         value={newsTitle}
                                         onChange={e => setNewsTitle(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={styles.input}
                                         required
                                     />
                                 </div>
@@ -425,26 +493,48 @@ export default function AdminPage() {
                                         placeholder="本文"
                                         value={newsContent}
                                         onChange={e => setNewsContent(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", height: "100px", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={{ ...styles.input, height: "100px" }}
                                         required
                                     />
                                 </div>
-                                <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
-                                    投稿する
+                                <button type="submit" style={styles.buttonPrimary}>
+                                    {newsId ? "更新する" : "投稿する"}
                                 </button>
+                                {newsId && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setNewsId(null);
+                                            setNewsTitle("");
+                                            setNewsContent("");
+                                            setNewsTheme("both");
+                                        }}
+                                        style={styles.buttonSecondary}>
+                                        キャンセル
+                                    </button>
+                                )}
                             </form>
                         ) : (
-                            <div style={{ padding: "1rem", background: "#eee", marginBottom: "2rem", borderRadius: "4px" }}>
+                            <div style={{ padding: "1rem", background: "rgba(0,0,0,0.05)", marginBottom: "2rem", borderRadius: "4px" }}>
                                 現在、ゲストモード（閲覧のみ）です。投稿するにはログインしてください。
                             </div>
                         )}
 
                         <h3>最近のお知らせ</h3>
-                        <ul>
+                        <ul style={{ listStyle: "none", padding: 0 }}>
                             {news.map(n => (
-                                <li key={n.id} style={{ borderBottom: "1px solid #eee", padding: "1rem 0" }}>
-                                    <div style={{ color: "#888", fontSize: "0.8rem" }}>{n.date}</div>
-                                    <div style={{ fontWeight: "bold" }}>{n.title}</div>
+                                <li key={n.id} style={{ borderBottom: "1px solid var(--text-dim)", padding: "1rem 0", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                                    <div>
+                                        <div style={{ color: "var(--text-dim)", fontSize: "0.8rem" }}>{n.date} <span style={{ marginLeft: "0.5rem", border: "1px solid currentColor", padding: "0 4px", fontSize: "0.7rem" }}>{n.theme}</span></div>
+                                        <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{n.title}</div>
+                                        <div style={{ fontSize: "0.9rem", marginTop: "0.5rem", whiteSpace: "pre-wrap", opacity: 0.9 }}>{n.content}</div>
+                                    </div>
+                                    {session && (
+                                        <div style={{ display: "flex", gap: "0.5rem", minWidth: "120px", justifyContent: "flex-end" }}>
+                                            <button onClick={() => handleEditNews(n)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "var(--sakura-pink)", border: "none", color: "var(--winter-navy)" }}>編集</button>
+                                            <button onClick={() => handleDeleteNews(n.id)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "rgba(255,0,0,0.1)", border: "1px solid red", color: "red" }}>削除</button>
+                                        </div>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -455,22 +545,22 @@ export default function AdminPage() {
                 {activeTab === "chars" && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         {session && (
-                            <form onSubmit={handleSaveChar} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <form onSubmit={handleSaveChar} style={styles.card}>
                                 <h3 style={{ marginBottom: "1rem" }}>キャラクター追加・編集</h3>
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
-                                    <input type="text" placeholder="ID (例: renko)" value={charId} onChange={e => setCharId(e.target.value)} style={{ padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} required />
-                                    <input type="text" placeholder="名前" value={charName} onChange={e => setCharName(e.target.value)} style={{ padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} required />
+                                    <input type="text" placeholder="ID (例: renko)" value={charId} onChange={e => setCharId(e.target.value)} style={styles.input} required />
+                                    <input type="text" placeholder="名前" value={charName} onChange={e => setCharName(e.target.value)} style={styles.input} required />
                                 </div>
                                 <div style={{ marginBottom: "1rem" }}>
-                                    <input type="text" placeholder="役割・肩書き" value={charRole} onChange={e => setCharRole(e.target.value)} style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} />
+                                    <input type="text" placeholder="役割・肩書き" value={charRole} onChange={e => setCharRole(e.target.value)} style={styles.input} />
                                 </div>
                                 <div style={{ marginBottom: "1rem" }}>
-                                    <textarea placeholder="説明文" value={charDesc} onChange={e => setCharDesc(e.target.value)} style={{ width: "100%", height: "100px", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }} />
+                                    <textarea placeholder="説明文" value={charDesc} onChange={e => setCharDesc(e.target.value)} style={{ ...styles.input, height: "100px" }} />
                                 </div>
 
-                                <div style={{ marginBottom: "1rem", border: "1px solid #eee", padding: "1rem", borderRadius: "4px" }}>
+                                <div style={{ marginBottom: "1rem", border: "1px solid var(--text-dim)", padding: "1rem", borderRadius: "4px" }}>
                                     <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>立ち絵画像</label>
-                                    <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem", color: "#666" }}>
+                                    <div style={{ marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.7 }}>
                                         {charImage ? `現在の設定: ${charImage}` : "画像未設定"}
                                     </div>
                                     <input
@@ -482,6 +572,7 @@ export default function AdminPage() {
                                                 setUploadFile(e.target.files[0]);
                                             }
                                         }}
+                                        style={{ color: "var(--text-main)" }}
                                     />
                                 </div>
 
@@ -489,7 +580,7 @@ export default function AdminPage() {
                                     <label>テーマカラー: </label>
                                     <input type="color" value={charColor} onChange={e => setCharColor(e.target.value)} />
                                 </div>
-                                <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                <button type="submit" style={styles.buttonPrimary}>
                                     保存する
                                 </button>
                             </form>
@@ -498,19 +589,19 @@ export default function AdminPage() {
                         <h3>登録済みキャラクター</h3>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
                             {chars.map(c => (
-                                <div key={c.id} style={{ border: "1px solid #eee", padding: "1rem", position: "relative", background: "#fff", boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
+                                <div key={c.id} style={{ border: "1px solid var(--text-dim)", padding: "1rem", position: "relative", background: "var(--hakurei-white)", boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
                                         <div style={{ width: "30px", height: "30px", background: c.color, borderRadius: "50%", overflow: "hidden", border: "1px solid #ddd" }}>
                                             {c.image_url && <img src={c.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
                                         </div>
                                         <strong>{c.name}</strong>
                                     </div>
-                                    <div style={{ fontSize: "0.8rem", color: "#888" }}>{c.role}</div>
+                                    <div style={{ fontSize: "0.8rem", color: "var(--text-dim)" }}>{c.role}</div>
                                     {session && (
                                         <>
                                             <button
                                                 onClick={() => handleEditChar(c)}
-                                                style={{ marginTop: "1rem", width: "100%", padding: "0.4rem", background: "#f0f0f0", border: "none", cursor: "pointer", fontSize: "0.8rem" }}
+                                                style={{ marginTop: "1rem", width: "100%", padding: "0.4rem", background: "rgba(0,0,0,0.05)", border: "none", cursor: "pointer", fontSize: "0.8rem", color: "var(--text-main)" }}
                                             >
                                                 編集
                                             </button>
@@ -532,7 +623,7 @@ export default function AdminPage() {
                 {activeTab === "diary" && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         {session ? (
-                            <form onSubmit={handleSaveDiary} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <form onSubmit={handleSaveDiary} style={styles.card}>
                                 <h3 style={{ marginBottom: "1rem" }}>日誌の投稿・編集</h3>
                                 <div style={{ marginBottom: "1rem" }}>
                                     <label style={{ display: "block", marginBottom: "0.5rem" }}>日付 (YYYY.MM.DD)</label>
@@ -541,7 +632,7 @@ export default function AdminPage() {
                                         placeholder="2026.01.01"
                                         value={diaryDate}
                                         onChange={e => setDiaryDate(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={styles.input}
                                         required
                                     />
                                 </div>
@@ -552,7 +643,7 @@ export default function AdminPage() {
                                         placeholder="タイトル"
                                         value={diaryTitle}
                                         onChange={e => setDiaryTitle(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={styles.input}
                                         required
                                     />
                                 </div>
@@ -573,7 +664,7 @@ export default function AdminPage() {
                                         onChange={e => setDiaryProgress(e.target.value)}
                                         style={{ width: "100%" }}
                                     />
-                                    <div style={{ marginBottom: "1rem" }}>
+                                    <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
                                         <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem" }}>公開範囲</label>
                                         <div style={{ display: "flex", gap: "1rem" }}>
                                             <label style={{ cursor: "pointer" }}>
@@ -589,7 +680,7 @@ export default function AdminPage() {
                                     </div>
                                 </div>
 
-                                <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                <button type="submit" style={styles.buttonPrimary}>
                                     {diaryId ? "更新する" : "投稿する"}
                                 </button>
                                 {diaryId && (
@@ -602,13 +693,13 @@ export default function AdminPage() {
                                             setDiaryContent("");
                                             setDiaryProgress(0);
                                         }}
-                                        style={{ padding: "0.8rem 2rem", background: "#ccc", border: "none", color: "#333", cursor: "pointer", marginLeft: "1rem" }}>
+                                        style={styles.buttonSecondary}>
                                         キャンセル
                                     </button>
                                 )}
                             </form>
                         ) : (
-                            <div style={{ padding: "1rem", background: "#eee", marginBottom: "2rem", borderRadius: "4px" }}>
+                            <div style={{ padding: "1rem", background: "rgba(0,0,0,0.05)", marginBottom: "2rem", borderRadius: "4px" }}>
                                 現在、ゲストモード（閲覧のみ）です。
                             </div>
                         )}
@@ -616,16 +707,16 @@ export default function AdminPage() {
                         <h3>過去の日誌</h3>
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                             {diary.map(d => (
-                                <div key={d.id} style={{ borderBottom: "1px solid #eee", padding: "1rem 0", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                                <div key={d.id} style={{ borderBottom: "1px solid var(--text-dim)", padding: "1rem 0", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                                     <div>
                                         <div style={{ color: "var(--hakurei-red)", fontSize: "0.9rem", fontWeight: "bold" }}>{d.date}</div>
                                         <h4 style={{ margin: "0.5rem 0" }}>{d.title}</h4>
-                                        <div style={{ fontSize: "0.8rem", color: "#aaa", marginTop: "0.5rem" }}>進捗: {d.progress}%</div>
+                                        <div style={{ fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "0.5rem" }}>進捗: {d.progress}%</div>
                                     </div>
                                     {session && (
                                         <div style={{ display: "flex", gap: "0.5rem" }}>
-                                            <button onClick={() => handleEditDiary(d)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer" }}>編集</button>
-                                            <button onClick={() => handleDeleteDiary(d.id)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "#fdd", border: "none", color: "red" }}>削除</button>
+                                            <button onClick={() => handleEditDiary(d)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "var(--sakura-pink)", border: "none" }}>編集</button>
+                                            <button onClick={() => handleDeleteDiary(d.id)} style={{ padding: "0.3rem 0.8rem", fontSize: "0.8rem", cursor: "pointer", background: "rgba(255,0,0,0.1)", border: "1px solid red", color: "red" }}>削除</button>
                                         </div>
                                     )}
                                 </div>
@@ -638,7 +729,7 @@ export default function AdminPage() {
                 {activeTab === "videos" && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         {session ? (
-                            <form onSubmit={handleAddVideo} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <form onSubmit={handleAddVideo} style={styles.card}>
                                 <h3 style={{ marginBottom: "1rem" }}>動画の追加</h3>
                                 <div style={{ marginBottom: "1rem" }}>
                                     <label style={{ display: "block", marginBottom: "0.5rem" }}>動画タイトル</label>
@@ -647,7 +738,7 @@ export default function AdminPage() {
                                         placeholder="例: 新作PV"
                                         value={videoTitle}
                                         onChange={e => setVideoTitle(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={styles.input}
                                         required
                                     />
                                 </div>
@@ -658,7 +749,7 @@ export default function AdminPage() {
                                         placeholder="https://www.youtube.com/watch?v=..."
                                         value={videoUrl}
                                         onChange={e => setVideoUrl(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={styles.input}
                                         required
                                     />
                                 </div>
@@ -676,7 +767,7 @@ export default function AdminPage() {
                                         </label>
                                     </div>
                                 </div>
-                                <button type="submit" style={{ padding: "0.8rem 2rem", background: "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                <button type="submit" style={styles.buttonPrimary}>
                                     追加する
                                 </button>
                             </form>
@@ -685,11 +776,11 @@ export default function AdminPage() {
                         <h3>登録済み動画</h3>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1rem" }}>
                             {videos.map(v => (
-                                <div key={v.id} style={{ border: "1px solid #eee", padding: "1rem", background: "#fff" }}>
+                                <div key={v.id} style={{ border: "1px solid var(--text-dim)", padding: "1rem", background: "rgba(255,255,255,0.05)" }}>
                                     <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>{v.title}</div>
-                                    <div style={{ fontSize: "0.8rem", color: "#888", wordBreak: "break-all", marginBottom: "1rem" }}>{v.url}</div>
+                                    <div style={{ fontSize: "0.8rem", opacity: 0.7, wordBreak: "break-all", marginBottom: "1rem" }}>{v.url}</div>
                                     {session && (
-                                        <button onClick={() => handleDeleteVideo(v.id)} style={{ width: "100%", padding: "0.5rem", background: "#fee", border: "none", color: "red", cursor: "pointer" }}>削除</button>
+                                        <button onClick={() => handleDeleteVideo(v.id)} style={{ width: "100%", padding: "0.5rem", background: "rgba(255,0,0,0.1)", border: "1px solid red", color: "red", cursor: "pointer" }}>削除</button>
                                     )}
                                 </div>
                             ))}
@@ -701,7 +792,7 @@ export default function AdminPage() {
                 {activeTab === "illustrations" && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         {session ? (
-                            <form onSubmit={handleSaveIllustration} style={{ background: "#fff", padding: "2rem", marginBottom: "3rem", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+                            <form onSubmit={handleSaveIllustration} style={styles.card}>
                                 <h3 style={{ marginBottom: "1rem" }}>イラスト投稿</h3>
                                 <div style={{ marginBottom: "1rem" }}>
                                     <input
@@ -709,7 +800,7 @@ export default function AdminPage() {
                                         placeholder="タイトル"
                                         value={illTitle}
                                         onChange={e => setIllTitle(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={styles.input}
                                         required
                                     />
                                 </div>
@@ -718,7 +809,7 @@ export default function AdminPage() {
                                         placeholder="説明文"
                                         value={illDesc}
                                         onChange={e => setIllDesc(e.target.value)}
-                                        style={{ width: "100%", padding: "0.8rem", height: "80px", background: "#f9f9f9", border: "1px solid #ddd", color: "#333" }}
+                                        style={{ ...styles.input, height: "80px" }}
                                     />
                                 </div>
                                 <div style={{ marginBottom: "1rem" }}>
@@ -735,7 +826,7 @@ export default function AdminPage() {
                                         </label>
                                     </div>
                                 </div>
-                                <div style={{ marginBottom: "1rem", border: "1px solid #eee", padding: "1rem", borderRadius: "4px" }}>
+                                <div style={{ marginBottom: "1rem", border: "1px solid var(--text-dim)", padding: "1rem", borderRadius: "4px" }}>
                                     <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>画像ファイル</label>
                                     <input
                                         id="illFileInput"
@@ -744,33 +835,36 @@ export default function AdminPage() {
                                         onChange={e => {
                                             if (e.target.files?.[0]) setIllFile(e.target.files[0]);
                                         }}
+                                        style={{ color: "var(--text-main)" }}
                                     />
                                 </div>
-                                <button type="submit" disabled={uploadingIll} style={{ padding: "0.8rem 2rem", background: uploadingIll ? "#ccc" : "var(--hakurei-red)", border: "none", color: "white", cursor: "pointer" }}>
+                                <button type="submit" disabled={uploadingIll} style={{ ...styles.buttonPrimary, opacity: uploadingIll ? 0.7 : 1 }}>
                                     {uploadingIll ? "アップロード中..." : "投稿する"}
                                 </button>
                             </form>
                         ) : (
-                            <div style={{ padding: "1rem", background: "#eee", marginBottom: "2rem", borderRadius: "4px" }}>
+                            <div style={{ padding: "1rem", background: "rgba(0,0,0,0.05)", marginBottom: "2rem", borderRadius: "4px" }}>
                                 現在、ゲストモード（閲覧のみ）です。
                             </div>
                         )}
 
+                        {/* We could list illustrations here if needed */}
                         <h3>登録済みイラスト</h3>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
-                            {illustrations.map(item => (
-                                <div key={item.id} style={{ border: "1px solid #eee", padding: "1rem", background: "#fff", position: "relative" }}>
-                                    <div style={{ aspectRatio: "1/1", overflow: "hidden", borderRadius: "4px", marginBottom: "0.5rem", background: "#eee" }}>
-                                        <img src={item.image_url} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            {illustrations.map(ill => (
+                                <div key={ill.id} style={{ border: "1px solid var(--text-dim)", padding: "1rem", background: "rgba(255,255,255,0.05)" }}>
+                                    <div style={{ height: "150px", overflow: "hidden", marginBottom: "0.5rem", background: "#000" }}>
+                                        {ill.image_url && <img src={ill.image_url} alt={ill.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
                                     </div>
-                                    <div style={{ fontWeight: "bold" }}>{item.title}</div>
-                                    <div style={{ fontSize: "0.8rem", color: "#666" }}>Theme: {item.theme}</div>
+                                    <div style={{ fontWeight: "bold" }}>{ill.title}</div>
+                                    <div style={{ fontSize: "0.8rem", opacity: 0.7 }}>Theme: {ill.theme}</div>
                                     {session && (
-                                        <button onClick={() => handleDeleteIllustration(item.id)} style={{ marginTop: "0.5rem", width: "100%", padding: "0.4rem", background: "#fee", border: "none", color: "red", cursor: "pointer" }}>削除</button>
+                                        <button onClick={() => handleDeleteIllustration(ill.id)} style={{ width: "100%", padding: "0.5rem", marginTop: "0.5rem", background: "rgba(255,0,0,0.1)", border: "1px solid red", color: "red", cursor: "pointer" }}>削除</button>
                                     )}
                                 </div>
                             ))}
                         </div>
+
                     </motion.div>
                 )}
 

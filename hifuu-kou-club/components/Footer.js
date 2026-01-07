@@ -42,6 +42,28 @@ export default function Footer() {
                     >
                         <span>YouTube</span>
                     </a>
+
+                    <a
+                        href="https://www.pixiv.net/users/119554479"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'color 0.3s' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#ccc'}
+                    >
+                        <span>Pixiv</span>
+                    </a>
+
+                    <a
+                        href="https://seiga.nicovideo.jp/my/?track=global_navi_top"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'color 0.3s' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#ccc'}
+                    >
+                        <span>ニコニコ静画</span>
+                    </a>
                 </div>
 
                 {/* Copyright */}
